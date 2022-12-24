@@ -1,0 +1,12 @@
+{
+  "name": "jp.iridescent.camera_live_production",
+  "displayName": "Camera Live Production",
+  "version": "0.1.0",
+  "unity": "2021.1",
+  "description": "Camera Live Production",
+  "keywords": [
+    "Timeline",
+    "Camera"
+  ],
+  "unityRelease": "7f1"
+}
