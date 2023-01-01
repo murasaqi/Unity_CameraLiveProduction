@@ -8,7 +8,7 @@ namespace CameraLiveProduction
     {
         
         public abstract void UpdateEffect(Camera camera);
-        public abstract void Initialize();
+        public abstract void Initialize(Camera camera);
         
         
     }

@@ -8,7 +8,6 @@ namespace CameraLiveProduction
     {
         // [HideInInspector]public Camera camera;
         public LayerMask cullingMask = -1;
-
         public override void UpdateEffect(Camera camera)
         {
             if(camera == null)
@@ -19,8 +18,9 @@ namespace CameraLiveProduction
             #endif
         }
         
-        public override void Initialize()
+        public override void Initialize(Camera camera)
         {
+            cullingMask = camera.cullingMask;
         }
         
     }
