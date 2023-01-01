@@ -199,9 +199,40 @@ namespace CameraLiveProduction
             }
             ApplyCameraQueue();
             material.SetFloat("_CrossFade", fader);
-            
-            
+
         }
+
+        // public void RenameCameraByClipName()
+        // {
+        //     var cameraClipDic = new Dictionary<Camera, string>();
+        //     
+        //     foreach (var clip in m_Clips)
+        //     {
+        //         var asset = clip.asset as CameraMixerTimelineClip;
+        //         if(asset == null)continue;
+        //         var clipName = clip.displayName;
+        //         var camera = asset.behaviour.camera;
+        //         if(camera == null) continue;
+        //         // Debug.Log($"{asset.newExposedReference.Resolve( playableDirector.playableGraph.GetResolver()).gameObject.name} {clipName}");
+        //         if (cameraClipDic.ContainsKey(camera))
+        //         {
+        //             Debug.Log("ContainsKey");
+        //             cameraClipDic[camera] = $"{cameraClipDic[camera]}_{clipName}";
+        //         }
+        //         else
+        //         {
+        //             Debug.Log("Not ContainsKey");
+        //             cameraClipDic.Add(camera,clipName);
+        //         }
+        //     }
+        //
+        //     foreach (var camera in cameraClipDic.Keys)
+        //     {
+        //         Debug.Log(cameraClipDic[camera]);
+        //         if(camera == null) continue;
+        //         camera.gameObject.name = cameraClipDic[camera];
+        //     }
+        // }
     }
 
 }

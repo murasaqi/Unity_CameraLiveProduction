@@ -1,4 +1,5 @@
 using System;
+using UnityEditor.Graphs;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
@@ -8,11 +9,12 @@ namespace CameraLiveProduction
 {
 
     [Serializable]
-    public class CameraSwitcherTimelineClip : PlayableAsset, ITimelineClipAsset
+    public class CameraMixerTimelineClip : PlayableAsset, ITimelineClipAsset
     {
-        public CameraSwitcherTimelineBehaviour behaviour = new CameraSwitcherTimelineBehaviour();
+        public CameraMixerTimelineBehaviour behaviour = new CameraMixerTimelineBehaviour();
         public ExposedReference<Camera> newExposedReference;
-        // public Camera camera;
+        private CameraMixerTimelineBehaviour clone;
+        public Camera Camera => clone.camera;
         public ClipCaps clipCaps
         {
             get { return ClipCaps.Blending; }
@@ -20,8 +22,8 @@ namespace CameraLiveProduction
 
         public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
         {
-            var playable = ScriptPlayable<CameraSwitcherTimelineBehaviour>.Create(graph, behaviour);
-            CameraSwitcherTimelineBehaviour clone = playable.GetBehaviour();
+            var playable = ScriptPlayable<CameraMixerTimelineBehaviour>.Create(graph, behaviour);
+            clone = playable.GetBehaviour();
             clone.camera = newExposedReference.Resolve(graph.GetResolver());
             return playable;
         }

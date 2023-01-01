@@ -10,13 +10,13 @@ using UnityEngine.Timeline;
 namespace CameraLiveProduction
 {
 
-    public class CameraSwitcherClipInfo
+    public class CameraMixerClipInfo
     {
         public TimelineClip clip;
-        public CameraSwitcherTimelineBehaviour behaviour;
+        public CameraMixerTimelineBehaviour behaviour;
         public float inputWeight;
         
-        public CameraSwitcherClipInfo(TimelineClip clip, CameraSwitcherTimelineBehaviour behaviour, float inputWeight)
+        public CameraMixerClipInfo(TimelineClip clip, CameraMixerTimelineBehaviour behaviour, float inputWeight)
         {
             this.clip = clip;
             this.behaviour = behaviour;
@@ -25,7 +25,7 @@ namespace CameraLiveProduction
         
         
     }
-    public class CameraSwitcherTimelineMixerBehaviour : PlayableBehaviour
+    public class CameraMixerTimelineMixerBehaviour : PlayableBehaviour
     {
         public TextMeshProUGUI debugText;
         private StringBuilder stringBuilder;
@@ -33,7 +33,7 @@ namespace CameraLiveProduction
         public List<TimelineClip> timelineClips = new List<TimelineClip>();
         private CameraMixer cameraMixer;
         
-        readonly List<CameraSwitcherClipInfo> cameraQue = new List<CameraSwitcherClipInfo>();
+        readonly List<CameraMixerClipInfo> cameraQue = new List<CameraMixerClipInfo>();
         private TimelineAsset timelineAsset;
         internal PlayableDirector director;
         private bool isFirstFrameHappened = false;
@@ -56,12 +56,15 @@ namespace CameraLiveProduction
                 cameraMixer.cameraList.Distinct();
                 foreach (var clip in timelineClips)
                 {
-                    var cameraMixerTimelineClip = clip.asset as CameraSwitcherTimelineClip;
+                    var cameraMixerTimelineClip = clip.asset as CameraMixerTimelineClip;
                     var cameraMixerTimelineBehaviour = cameraMixerTimelineClip.behaviour;
-                    var v = cameraMixerTimelineBehaviour.cameraPostProductions.RemoveAll(x => cameraMixerTimelineBehaviour.cameraPostProductions.Any(y => y.GetType() == x.GetType() && x!= y));
+                    cameraMixerTimelineBehaviour.cameraPostProductions.RemoveAll(x => x == null);
+                    cameraMixerTimelineBehaviour.cameraPostProductions.RemoveAll(x => cameraMixerTimelineBehaviour.cameraPostProductions.Any(y => y.GetType() == x.GetType() && x!= y));
 
                 }
-                
+
+                RenameCameraByClipName();
+
             }
 
             // var _director =   playable.GetGraph().GetResolver() as PlayableDirector;
@@ -72,9 +75,9 @@ namespace CameraLiveProduction
             {
                 var clip = timelineClips[i];
                 float inputWeight = playable.GetInputWeight(i);
-                ScriptPlayable<CameraSwitcherTimelineBehaviour> inputPlayable =
-                    (ScriptPlayable<CameraSwitcherTimelineBehaviour>)playable.GetInput(i);
-                CameraSwitcherTimelineBehaviour input = inputPlayable.GetBehaviour();
+                ScriptPlayable<CameraMixerTimelineBehaviour> inputPlayable =
+                    (ScriptPlayable<CameraMixerTimelineBehaviour>)playable.GetInput(i);
+                CameraMixerTimelineBehaviour input = inputPlayable.GetBehaviour();
                 input.cameraPostProductions.Distinct();
                 
                 
@@ -85,7 +88,7 @@ namespace CameraLiveProduction
 
                 if (inputWeight > 0)
                 {
-                    cameraQue.Add(new CameraSwitcherClipInfo(clip, input, inputWeight));
+                    cameraQue.Add(new CameraMixerClipInfo(clip, input, inputWeight));
                 }
                 
                 // if (clip.start <= director.time && director.time < clip.start + clip.duration)
@@ -124,18 +127,54 @@ namespace CameraLiveProduction
             if(cameraMixer)cameraMixer.useTimeline = false;
         }
 
-        private void ApplyPostEffect(List<CameraSwitcherClipInfo> clipInfos)
+        private void ApplyPostEffect(List<CameraMixerClipInfo> clipInfos)
         {
             foreach (var clipInfo in clipInfos)
             {
                 foreach (var cameraPostProduction in clipInfo.behaviour.cameraPostProductions)
                 {
-                    cameraPostProduction.UpdateEffect(clipInfo.behaviour.camera);
+                    if (cameraPostProduction != null)
+                    {
+                        if(clipInfo.behaviour.camera)cameraPostProduction.UpdateEffect(clipInfo.behaviour.camera);
+                    }
                 }
             }
         }
+        
+        public void RenameCameraByClipName()
+        {
+            var cameraClipDic = new Dictionary<Camera, string>();
+            foreach (var clip in timelineClips)
+            {
+                var asset = clip.asset as CameraMixerTimelineClip;
+                if(asset == null)continue;
+                var clipName = clip.displayName;
+                var camera = asset.behaviour.camera;
+                if(camera == null) continue;
+                
+                Debug.Log($"{clipName} {camera.gameObject.name}");
+                if (cameraClipDic.ContainsKey(camera))
+                {
+                    Debug.Log("ContainsKey");
+                    cameraClipDic[camera] = $"{cameraClipDic[camera]}_{clipName}";
+                }
+                else
+                {
+                    Debug.Log("Not ContainsKey");
+                    cameraClipDic.Add(camera,clipName);
+                }
+            }
 
-        private void SetCameraQueue(List<CameraSwitcherClipInfo> clips)
+            foreach (var camera in cameraClipDic.Keys)
+            {
+                Debug.Log(cameraClipDic[camera]);
+                if(camera == null) continue;
+                camera.gameObject.name = cameraClipDic[camera];
+            }
+
+        }
+
+        private void SetCameraQueue(List<CameraMixerClipInfo> clips)
         {
             if(cameraMixer == null) return;
             if(clips.Count<=0) return;

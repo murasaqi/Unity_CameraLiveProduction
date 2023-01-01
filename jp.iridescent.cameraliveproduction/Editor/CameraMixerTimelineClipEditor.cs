@@ -7,7 +7,7 @@ using UnityEngine.Timeline;
 namespace CameraLiveProduction
 {
 
-    [CustomEditor(typeof(CameraSwitcherTimelineClip))]
+    [CustomEditor(typeof(CameraMixerTimelineClip))]
     public class CameraSwitcherTimelineClipEditor:Editor
     {
         public override void OnInspectorGUI()
@@ -19,7 +19,7 @@ namespace CameraLiveProduction
         {
             serializedObject.Update();
             
-            var cameraSwitcherTimelineClip = serializedObject.targetObject  as CameraSwitcherTimelineClip;
+            var cameraSwitcherTimelineClip = serializedObject.targetObject  as CameraMixerTimelineClip;
             
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(serializedObject.FindProperty("newExposedReference"));
@@ -34,7 +34,7 @@ namespace CameraLiveProduction
             // DrawPropertyInInspector(stageLightProfile.FindProperty("stageLightProperties"));
         }
         
-        private void DrawAddPropertyButton(CameraSwitcherTimelineClip cameraSwitcherTimelineClip)
+        private void DrawAddPropertyButton(CameraMixerTimelineClip cameraMixerTimelineClip)
         {
             EditorGUI.BeginChangeCheck();
 
@@ -54,7 +54,7 @@ namespace CameraLiveProduction
             // var typeDict = new Dictionary<string, Type>();
             
             selectList.Insert(0,"Add Effect");
-            foreach (var property in cameraSwitcherTimelineClip.behaviour.cameraPostProductions
+            foreach (var property in cameraMixerTimelineClip.behaviour.cameraPostProductions
                          )
             {
                 if(property == null) continue;
@@ -72,7 +72,7 @@ namespace CameraLiveProduction
             {
                 var type = CameraLiveSwitcherUtility.GetTypeByClassName(selectList[select]);
                 var property = Activator.CreateInstance(type) as CameraPostProductionBase;
-                cameraSwitcherTimelineClip.behaviour.cameraPostProductions.Add(property);
+                cameraMixerTimelineClip.behaviour.cameraPostProductions.Add(property);
             }
             
             
