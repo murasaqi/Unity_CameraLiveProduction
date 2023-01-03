@@ -256,7 +256,7 @@ public class CameraMixerRenameTool : EditorWindow
         // foreach (Transform child in cameraSwitcherControl.gameObject.transform)
         // {
 
-        var childrens = new List<Transform>();
+        // var childrens = new List<Transform>();
        
         //     var sorted = cameraSwitcherControl.gameObject.transform.chil
         //     sorted.Sort(compare);

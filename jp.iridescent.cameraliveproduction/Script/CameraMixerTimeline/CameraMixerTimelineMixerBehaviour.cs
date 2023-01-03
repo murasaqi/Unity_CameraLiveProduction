@@ -71,6 +71,8 @@ namespace CameraLiveProduction
             // Debug.Log($"{director.name}:{director.time},{_director.name}:{_director.time}");
             int inputCount = playable.GetInputCount();
             cameraQue.Clear();
+            var hasCamera = false;
+            var offsetTime = director.time + (1 / timelineAsset.editorSettings.frameRate)*3;
             for (int i = 0; i < inputCount; i++)
             {
                 var clip = timelineClips[i];
@@ -88,10 +90,16 @@ namespace CameraLiveProduction
 
                 if (inputWeight > 0)
                 {
+                    hasCamera = true;
                     cameraQue.Add(new CameraMixerClipInfo(clip, input, inputWeight));
                 }
-                
-                // if (clip.start <= director.time && director.time < clip.start + clip.duration)
+
+                if (hasCamera && clip.start <= offsetTime && offsetTime < clip.start + clip.duration)
+                {
+                    input.camera.enabled = true;
+                    
+                    // cameraQue.Add(new CameraMixerClipInfo(clip, input, inputWeight));
+                }
                 // {
                 //     cameraQue.Add(new CameraSwitcherClipInfo(clip, input, inputWeight));
                 //     Debug.Log($"time: {clip.displayName} {input.camera.name}, {clip.start}, {clip.duration}");
