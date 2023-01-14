@@ -197,7 +197,7 @@ public class CameraMixerRenameTool : EditorWindow
             var asset = clip.asset as CameraMixerTimelineClip;
             if(asset == null) continue;
             var clipName = clip.displayName;
-            var camera = asset.Camera;
+            var camera = asset.behaviour.liveCamera.GetComponent<Camera>();
             if(camera == null) continue;
             // Debug.Log($"{clip.displayName} {asset.newExposedReference.Resolve(playableDirector.playableGraph.GetResolver())}");
             if (cameraClipDic.ContainsKey(camera))

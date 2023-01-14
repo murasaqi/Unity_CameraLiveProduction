@@ -80,8 +80,8 @@ namespace CameraLiveProduction
                 Resize();
             });
             
-            root.Q<ObjectField>("Cam1Field").objectType = typeof(Camera);
-            root.Q<ObjectField>("Cam2Field").objectType = typeof(Camera);
+            root.Q<ObjectField>("Cam1Field").objectType = typeof(LiveCamera);
+            root.Q<ObjectField>("Cam2Field").objectType = typeof(LiveCamera);
             
             popUpField1 = root.Q<DropdownField>("CameraList1");
             var cameraList = new List<string>();

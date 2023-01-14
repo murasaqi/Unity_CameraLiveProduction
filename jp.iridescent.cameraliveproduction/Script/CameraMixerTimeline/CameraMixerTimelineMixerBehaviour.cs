@@ -15,7 +15,7 @@ namespace CameraLiveProduction
         public TimelineClip clip;
         public CameraMixerTimelineBehaviour behaviour;
         public float inputWeight;
-        
+       
         public CameraMixerClipInfo(TimelineClip clip, CameraMixerTimelineBehaviour behaviour, float inputWeight)
         {
             this.clip = clip;
@@ -29,7 +29,7 @@ namespace CameraLiveProduction
     {
         public TextMeshProUGUI debugText;
         private StringBuilder stringBuilder;
-
+        private float currentTime;
         public List<TimelineClip> timelineClips = new List<TimelineClip>();
         private CameraMixer cameraMixer;
         
@@ -58,6 +58,7 @@ namespace CameraLiveProduction
                 {
                     var cameraMixerTimelineClip = clip.asset as CameraMixerTimelineClip;
                     var cameraMixerTimelineBehaviour = cameraMixerTimelineClip.behaviour;
+                    // cameraMixerTimelineBehaviour.Initialize();
                     cameraMixerTimelineBehaviour.cameraPostProductions.RemoveAll(x => x == null);
                     cameraMixerTimelineBehaviour.cameraPostProductions.RemoveAll(x => cameraMixerTimelineBehaviour.cameraPostProductions.Any(y => y.GetType() == x.GetType() && x!= y));
 
@@ -66,12 +67,14 @@ namespace CameraLiveProduction
                 RenameCameraByClipName();
 
             }
+            
 
             // var _director =   playable.GetGraph().GetResolver() as PlayableDirector;
             // Debug.Log($"{director.name}:{director.time},{_director.name}:{_director.time}");
             int inputCount = playable.GetInputCount();
             cameraQue.Clear();
             var hasCamera = false;
+            currentTime = (float)director.time;
             var offsetTime = director.time + (1 / timelineAsset.editorSettings.frameRate)*3;
             for (int i = 0; i < inputCount; i++)
             {
@@ -83,9 +86,9 @@ namespace CameraLiveProduction
                 input.cameraPostProductions.Distinct();
                 
                 
-                if (input.camera != null && cameraMixer.cameraList.Contains(input.camera) != true)
+                if (input.liveCamera != null && cameraMixer.cameraList.Contains(input.liveCamera) != true)
                 {
-                    cameraMixer.cameraList.Add(input.camera);
+                    cameraMixer.cameraList.Add(input.liveCamera);
                 }
 
                 if (inputWeight > 0)
@@ -96,7 +99,7 @@ namespace CameraLiveProduction
 
                 if (hasCamera && clip.start <= offsetTime && offsetTime < clip.start + clip.duration)
                 {
-                    input.camera.enabled = true;
+                    input.liveCamera.TargetCamera.enabled = true;
                     
                     // cameraQue.Add(new CameraMixerClipInfo(clip, input, inputWeight));
                 }
@@ -127,6 +130,11 @@ namespace CameraLiveProduction
                 // if (B != null && B.behaviour.camera != null) _stringBuilder.Append($" >> {B.behaviour.camera.name}");
 
             }
+
+            if (cameraMixer.cameraRenderTiming == CameraRenderTiming.Timeline)
+            {
+                cameraMixer.Render();
+            }
         }
         
         public override void OnPlayableDestroy (Playable playable)
@@ -143,7 +151,7 @@ namespace CameraLiveProduction
                 {
                     if (cameraPostProduction != null)
                     {
-                        if(clipInfo.behaviour.camera)cameraPostProduction.UpdateEffect(clipInfo.behaviour.camera);
+                        if(clipInfo.behaviour.liveCamera.GetComponent<Camera>())cameraPostProduction.UpdateEffect(clipInfo.behaviour.liveCamera,currentTime);
                     }
                 }
             }
@@ -157,6 +165,11 @@ namespace CameraLiveProduction
                 var asset = clip.asset as CameraMixerTimelineClip;
                 if(asset == null)continue;
                 var clipName = clip.displayName;
+                // Debug.Log($"{clipName},{asset.behaviour.liveCamera.OriginalCamera}");
+                // if (asset.behaviour.liveCamera.OriginalCamera == null)
+                // {
+                //     asset.behaviour.liveCamera.Initialize();
+                // }
                 var camera = asset.behaviour.camera;
                 if(camera == null) continue;
                 
@@ -190,13 +203,13 @@ namespace CameraLiveProduction
             if (clips.Count == 1)
             {
                
-                if(clips[0].behaviour.camera == null) return;
-                cameraMixer.SetCameraQueue(clips[0].behaviour.camera,null,0);
+                if(clips[0].behaviour.liveCamera.GetComponent<Camera>() == null) return;
+                cameraMixer.SetCameraQueue(clips[0].behaviour.liveCamera,null,0);
             }
             else if (clips.Count == 2)
             {
-                if(clips[0].behaviour.camera == null || clips[1].behaviour.camera == null) return;
-                cameraMixer.SetCameraQueue(clips[0].behaviour.camera, clips[1].behaviour.camera, 1f-clips[0].inputWeight);
+                if(clips[0].behaviour.liveCamera.GetComponent<Camera>() == null || clips[1].behaviour.liveCamera.GetComponent<Camera>() == null) return;
+                cameraMixer.SetCameraQueue(clips[0].behaviour.liveCamera, clips[1].behaviour.liveCamera, 1f-clips[0].inputWeight);
             }
             
             

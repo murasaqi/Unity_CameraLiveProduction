@@ -13,8 +13,10 @@ namespace CameraLiveProduction
     {
         public CameraMixerTimelineBehaviour behaviour = new CameraMixerTimelineBehaviour();
         public ExposedReference<Camera> newExposedReference;
-        private CameraMixerTimelineBehaviour clone;
-        public Camera Camera => clone.camera;
+        public CameraMixerTimelineBehaviour clone;
+
+        // public Camera camera;
+        // public Camera Camera => clone.camera;
         public ClipCaps clipCaps
         {
             get { return ClipCaps.Blending; }
@@ -24,9 +26,13 @@ namespace CameraLiveProduction
         {
             var playable = ScriptPlayable<CameraMixerTimelineBehaviour>.Create(graph, behaviour);
             clone = playable.GetBehaviour();
+            // camera = newExposedReference.Resolve(graph.GetResolver());
             clone.camera = newExposedReference.Resolve(graph.GetResolver());
+            clone.Initialize();
             return playable;
         }
+        
+        
     }
 
 }
