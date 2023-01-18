@@ -11,7 +11,7 @@ namespace CameraLiveProduction
         public Vector3 noiseSeed = Vector3.zero;
         // public Vector3 noiseScale = new Vector3(1, 1, 1);
         public Vector3 roughness = new Vector3(1, 1, 1);
-        public override void UpdateEffect(LiveCamera liveCamera,float time)
+        public override void UpdateEffect(LiveCamera liveCamera,float time, float weight = 1f)
         {
             if(liveCamera == null)
                 return;

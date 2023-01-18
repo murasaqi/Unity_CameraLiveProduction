@@ -10,7 +10,7 @@ namespace CameraLiveProduction
         // [HideInInspector]public Camera camera;
         public LayerMask cullingMask = -1;
         // private HDAdditionalCameraData hdAdditionalCameraData = null;
-        public override void UpdateEffect(LiveCamera liveCamera, float time)
+        public override void UpdateEffect(LiveCamera liveCamera, float time,float weight = 1f)
         {
             if(liveCamera.TargetCamera == null)
                 return;

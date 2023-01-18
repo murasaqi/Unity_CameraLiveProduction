@@ -17,7 +17,7 @@ namespace CameraLiveProduction
         
         // [SerializeField]private bool initialized = false;
         
-        public override void UpdateEffect(LiveCamera liveCamera, float time)
+        public override void UpdateEffect(LiveCamera liveCamera, float time, float weight = 1f)
         {
             if(liveCamera == null)
                 return;
