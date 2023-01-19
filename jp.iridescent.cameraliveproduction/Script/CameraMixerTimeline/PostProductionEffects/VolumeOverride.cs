@@ -4,17 +4,31 @@ using UnityEngine.Rendering;
 
 namespace CameraLiveProduction
 {
+    [Serializable]
     public class VolumeOverride:CameraPostProductionBase
     {
 
 
-        public VolumeProfile volumeProfile;
+        [SerializeReference]public VolumeProfile volumeProfile;
+        [HideInInspector]public Volume volume;
+        [SerializeField] [Range(0f,1f)]public float volumeWeight = 1;
         public override void UpdateEffect(LiveCamera liveCamera, float time,float weight = 1f)
         {
             if(liveCamera.TargetCamera == null)
                 return;
-#if USE_HDRP
+
+            progress = weight;
+            if (volume == null)
+            {
+                Initialize(liveCamera);
+            }
+            volume.enabled = weight > 0;
+            volume.weight = progress * volumeWeight;
+            volume.profile = volumeProfile;
             
+            
+#if USE_HDRP
+
 #endif
         }
         
@@ -23,11 +37,22 @@ namespace CameraLiveProduction
             if(liveCamera == null)
                 return;
             
-            var volume = liveCamera.GetComponent<UnityEngine.Rendering.Volume>();
+            volume = liveCamera.GetComponent<UnityEngine.Rendering.Volume>();
             if (volume == null)
-                volumeProfile = volume.profile;
+            {
+                volume = liveCamera.gameObject.AddComponent<Volume>();
+                volumeProfile = volume.sharedProfile;
+            }
         }
-        
+
+        public override void OnClipDisable(LiveCamera liveCamera)
+        {
+            if(volume == null) return;
+            volume.weight = 0;
+            volume.enabled = false;
+            progress = 0;
+        }
+
         public override void OnDestroy(LiveCamera liveCamera)
         {
         }

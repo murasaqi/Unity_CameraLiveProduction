@@ -28,7 +28,11 @@ namespace CameraLiveProduction
             liveCamera.TargetCamera.aperture = aperture;
             liveCamera.TargetCamera.focusDistance = focusDistance;
         }
-        
+
+        public override void OnClipDisable(LiveCamera liveCamera)
+        {
+        }
+
         public override void Initialize(LiveCamera liveCamera)
         {
             

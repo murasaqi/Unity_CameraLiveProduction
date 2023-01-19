@@ -86,6 +86,8 @@ namespace CameraLiveProduction
                 input.cameraPostProductions.Distinct();
                 
                 
+                
+                
                 if (input.liveCamera != null && cameraMixer.cameraList.Contains(input.liveCamera) != true)
                 {
                     cameraMixer.cameraList.Add(input.liveCamera);
@@ -95,6 +97,16 @@ namespace CameraLiveProduction
                 {
                     hasCamera = true;
                     cameraQue.Add(new CameraMixerClipInfo(clip, input, inputWeight));
+                }
+                else
+                {
+                    foreach (var postProduction in input.cameraPostProductions)
+                    {
+                        if (postProduction.progress != 0f)
+                        {
+                            postProduction.UpdateEffect(input.liveCamera,0f,0f);
+                        }
+                    }
                 }
 
                 if (hasCamera && clip.start <= offsetTime && offsetTime < clip.start + clip.duration)

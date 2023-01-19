@@ -19,7 +19,12 @@ namespace CameraLiveProduction
             liveCamera.TargetCamera.cullingMask = cullingMask;
             #endif
         }
-        
+
+
+        public override void OnClipDisable(LiveCamera liveCamera)
+        {
+        }
+
         public override void Initialize(LiveCamera liveCamera)
         {
             cullingMask = liveCamera.TargetCamera.cullingMask;

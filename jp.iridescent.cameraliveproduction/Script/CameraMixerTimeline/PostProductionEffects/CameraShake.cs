@@ -33,7 +33,15 @@ namespace CameraLiveProduction
             liveCamera.TargetCamera.transform.localPosition = offsetPosition + noise;
             
         }
-       
+
+        public override void OnClipDisable(LiveCamera liveCamera)
+        {
+            if (liveCamera.hasCloneCamera)
+            {
+                liveCamera.TargetCamera.transform.localPosition = Vector3.zero;
+            }
+        }
+
         public override void Initialize(LiveCamera liveCamera)
         {
             if(liveCamera == null) return;
