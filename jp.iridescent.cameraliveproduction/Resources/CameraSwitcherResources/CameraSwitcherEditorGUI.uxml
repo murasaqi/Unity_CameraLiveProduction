@@ -1,6 +1,7 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
     <ui:VisualElement name="Settings">
         <uie:Vector2IntField label="Resolution" name="ResolutionField" />
+        <ui:EnumField label="Scale" type="CameraLiveProduction.ResolutionScale, CameraLiveProduction" binding-path="resolutionScale" name="ResolutionScaleField" />
         <ui:EnumField label="Render Timing" type="CameraLiveProduction.CameraRenderTiming, CameraLiveProduction" binding-path="cameraRenderTiming" />
         <uie:EnumField label="Format" binding-path="format" name="RTFormatField" style="margin-top: 4px;" />
         <uie:EnumField label="Depth" binding-path="depthStencilFormat" name="RTDepthField" style="margin-top: 4px;" />

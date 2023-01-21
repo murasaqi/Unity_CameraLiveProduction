@@ -67,6 +67,11 @@ namespace CameraLiveProduction
             xInput.Q<Label>().text = "W";
             yInput.Q<Label>().text = "H";
             
+            var resolutionScaleField = root.Q<EnumField>("ResolutionScaleField");
+            resolutionScaleField.RegisterValueChangedCallback((v) =>
+            {
+                cameraMixer.InitRenderTextures();
+            });
             var antiAliasingField = root.Q<EnumField>("RTAntiAliasingField");
             antiAliasingField.RegisterValueChangedCallback((v) =>
             {

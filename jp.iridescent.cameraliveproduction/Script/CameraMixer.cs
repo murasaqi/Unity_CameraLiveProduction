@@ -9,8 +9,8 @@ using UnityEngine.UI;
 
 namespace CameraLiveProduction
 {
-
-      public enum DepthStencilFormat
+    [Serializable]
+    public enum DepthStencilFormat
     {
         NONE = 1,
         D16_UNORM = 16,
@@ -20,7 +20,18 @@ namespace CameraLiveProduction
         D32_SFLOAT_S8_UINT = 32,
     }
 
+    [Serializable]
+    public enum ResolutionScale
+    {
+        x0_25,
+        x0_5,
+        x1,
+        x1_5,
+        x2,
+        
+    }
 
+    [Serializable]
     public enum AntiAliasing
     {
         NONE = 0,
@@ -46,6 +57,7 @@ namespace CameraLiveProduction
         public LiveCamera cam2;
         public int width = 1920;
         public int height = 1080;
+        public ResolutionScale resolutionScale = ResolutionScale.x1;
         public RenderTextureFormat format = RenderTextureFormat.ARGB32;
         public DepthStencilFormat depthStencilFormat = DepthStencilFormat.D32_SFLOAT_S8_UINT;
         public RenderTexture renderTexture1;
@@ -63,6 +75,12 @@ namespace CameraLiveProduction
         {
 
         }
+
+        public Vector2Int Resolution()
+        {
+            var scale = GetResolutionScale();
+            return new Vector2Int(Mathf.CeilToInt(width * scale),  Mathf.CeilToInt(height * scale));
+        }
         
         public void InitRenderTextures()
         {
@@ -77,10 +95,12 @@ namespace CameraLiveProduction
                 renderTexture2.Release();
                 DestroyImmediate(renderTexture2);
             }
-            renderTexture1 = new RenderTexture(width, height, (int)depthStencilFormat, format);
+            
+            var res = Resolution();
+            renderTexture1 = new RenderTexture(res.x, res.y, (int)depthStencilFormat, format);
             renderTexture1.antiAliasing = (int)antiAliasing;
             
-            renderTexture2 = new RenderTexture(width, height, (int)depthStencilFormat, format);
+            renderTexture2 = new RenderTexture(res.x, res.y, (int)depthStencilFormat, format);
             renderTexture2.antiAliasing = (int)antiAliasing;
             if(material != null) material.SetTexture("_TextureA", renderTexture1);
             if(material != null) material.SetTexture("_TextureB", renderTexture2);
@@ -214,6 +234,25 @@ namespace CameraLiveProduction
                 Render();
             }
         }
+        
+        public float GetResolutionScale()
+        {
+            switch (resolutionScale)
+            {
+                case ResolutionScale.x0_25:
+                    return 0.25f;
+                case ResolutionScale.x0_5:
+                    return 0.5f;
+                case ResolutionScale.x1:
+                    return 1f;
+                case ResolutionScale.x1_5:
+                    return 1.5f;        
+                case ResolutionScale.x2:
+                    return 2f;
+                default:
+                    return 1f;
+            }
+        } 
         // public void RenameCameraByClipName()
         // {
         //     var cameraClipDic = new Dictionary<Camera, string>();
