@@ -79,13 +79,23 @@ public class CameraToggleSwitcherTimelineMixerBehaviour : PlayableBehaviour
         ScriptPlayable<CameraToggleSwitcherTimelineBehaviour> inputPlayable = (ScriptPlayable<CameraToggleSwitcherTimelineBehaviour>)playable.GetInput(index);
         CameraToggleSwitcherTimelineBehaviour input = inputPlayable.GetBehaviour ();
         var preClip = clips[index];
+        var blend = 0f;
+        if (fader == 0f || fader == 1f)
+        {
+            blend = fader;
+        }
+        else
+        {
+            blend = input.fader.Evaluate(fader);
+        }
         var preCameraToggleSwitcherTimelineClip = preClip.asset as CameraToggleSwitcherTimelineClip;
         if (preCameraToggleSwitcherTimelineClip != null)
         {
             cameraToggleSwitcher.SetCameraQueue(
                 preCameraToggleSwitcherTimelineClip.resolvedCameraA,
                 preCameraToggleSwitcherTimelineClip.resolvedCameraB,
-                input.fader.Evaluate(fader));
+                blend
+                );
         }
     }
     
