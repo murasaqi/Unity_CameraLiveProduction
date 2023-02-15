@@ -16,13 +16,13 @@ namespace CameraLiveProduction
         public HDAdditionalCameraData hdAdditionalCameraData;
         public override void UpdateEffect(LiveCamera liveCamera, float time, float weight = 1f)
         {
-            if(liveCamera == null)
+            if(liveCamera == null || hdAdditionalCameraData == null)
                 return;
 
             // if (!initialized) Initialize(liveCamera);
             liveCamera.TargetCamera.sensorSize = sensorSize;
-            liveCamera.TargetCamera.iso = ISO;
-            liveCamera.TargetCamera.shutterSpeed = shutterSpeed;
+            hdAdditionalCameraData.physicalParameters.iso = ISO;
+            hdAdditionalCameraData.physicalParameters.shutterSpeed = shutterSpeed;
             liveCamera.TargetCamera.gateFit = gateFit;
         }
 
@@ -37,8 +37,8 @@ namespace CameraLiveProduction
             liveCamera.TargetCamera.usePhysicalProperties = true;
             hdAdditionalCameraData = liveCamera.TargetCamera.GetComponent<HDAdditionalCameraData>();
             sensorSize = liveCamera.TargetCamera.sensorSize;
-            ISO = liveCamera.TargetCamera.iso;
-            shutterSpeed = liveCamera.TargetCamera.shutterSpeed;
+            ISO = hdAdditionalCameraData.physicalParameters.iso;
+            shutterSpeed = hdAdditionalCameraData.physicalParameters.shutterSpeed;
             gateFit = liveCamera.TargetCamera.gateFit;
             // initialized = true;
         }

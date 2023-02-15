@@ -10,8 +10,8 @@ namespace CameraLiveProduction
 
     public enum CameraRenderTiming
     {
-        Timeline,
-        CameraMixer
+        Timeline =0,
+        Update=1
     }
     [TrackColor(0.8042867f, 0.3647798f, 1f)]
     [TrackClipType(typeof(CameraMixerTimelineClip))]

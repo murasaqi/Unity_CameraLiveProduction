@@ -1,13 +1,16 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <ui:VisualElement name="Button" style="align-items: center; margin-top: 3px; margin-bottom: 3px;">
+        <ui:Button text="Initialize" display-tooltip-when-elided="true" name="InitializeButton" style="max-width: 100px; align-items: stretch; width: 100px;" />
+    </ui:VisualElement>
     <ui:VisualElement name="Settings">
         <uie:Vector2IntField label="Resolution" name="ResolutionField" />
-        <ui:DropdownField label="Resolution Scale" index="-1" choices="System.Collections.Generic.List`1[System.String]" name="ResolutionScaleField" binding-path="resolutionScale" />
-        <ui:DropdownField label="Render Timing" index="-1" choices="System.Collections.Generic.List`1[System.String]" name="CameraRenderTimingField" binding-path="cameraRenderTiming" />
+        <uie:EnumField label="Resolution Scale" binding-path="resolutionScale" name="ResolutionScaleField" style="margin-top: 4px;" />
+        <uie:EnumField label="Render Timing" binding-path="cameraRenderTiming" name="CameraRenderTimingField" style="margin-top: 4px;" />
         <uie:EnumField label="Format" binding-path="format" name="RTFormatField" style="margin-top: 4px;" />
         <uie:EnumField label="Depth" binding-path="depthStencilFormat" name="RTDepthField" style="margin-top: 4px;" />
         <uie:EnumField label="AntiAliasing" binding-path="antiAliasing" name="RTAntiAliasingField" style="margin-top: 4px;" />
-        <uie:PropertyField name="CameraListView" binding-path="cameraList" />
     </ui:VisualElement>
+    <uie:PropertyField name="CameraListField" binding-path="cameraList" />
     <ui:VisualElement name="CameraSelection" style="flex-direction: column; justify-content: space-around; margin-top: 4px; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0;">
         <ui:VisualElement style="flex-direction: row; justify-content: space-around; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0;">
             <ui:VisualElement name="Camera1" style="align-items: center; flex-wrap: nowrap; padding-left: 5px; padding-right: 5px; width: 50%;">
@@ -15,8 +18,8 @@
                 <ui:VisualElement name="Camera1Preview" style="max-height: 120px; border-left-width: 0; border-right-width: 0; border-top-width: 0; border-bottom-width: 0; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0);" />
                 <ui:VisualElement style="flex-direction: column; min-width: auto; align-items: stretch; justify-content: space-around; flex-wrap: nowrap; width: 100%; margin-left: 0; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0;">
                     <uie:ObjectField binding-path="cam1" name="Cam1Field" style="justify-content: space-around; width: 100%; margin-left: 0; margin-right: 0; margin-top: 1px; margin-bottom: 1px;" />
-                    <ui:DropdownField index="-1" choices="System.Collections.Generic.List`1[System.String]" name="CameraList1" style="justify-content: space-around; width: 100%; margin-left: 0; margin-right: 0; margin-top: 1px; margin-bottom: 1px;" />
                 </ui:VisualElement>
+                <ui:DropdownField index="-1" choices="System.Collections.Generic.List`1[System.String]" name="CameraList1" style="justify-content: space-around; width: 100%; margin-left: 0; margin-right: 0; margin-top: 1px; margin-bottom: 1px;" />
             </ui:VisualElement>
             <ui:VisualElement name="Camera2" style="align-items: center; min-width: auto; flex-wrap: nowrap; width: 50%; padding-left: 5px; padding-right: 5px;">
                 <ui:Label text="Cam 2" display-tooltip-when-elided="true" />
@@ -38,5 +41,5 @@
             <ui:Label text="Output" display-tooltip-when-elided="true" />
         </ui:VisualElement>
     </ui:VisualElement>
-    <uie:PropertyField binding-path="material" />
+    <uie:PropertyField binding-path="resolutionScaleresolutionScale" />
 </ui:UXML>

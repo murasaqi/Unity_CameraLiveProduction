@@ -19,14 +19,14 @@ namespace CameraLiveProduction
         
         public override void UpdateEffect(LiveCamera liveCamera, float time, float weight = 1f)
         {
-            if(liveCamera == null)
+            if(liveCamera == null || hdAdditionalCameraData == null)
                 return;
 
             // if (!initialized) Initialize(liveCamera);
             liveCamera.TargetCamera.focalLength = focalLength;
             liveCamera.TargetCamera.lensShift = shift;
-            liveCamera.TargetCamera.aperture = aperture;
-            liveCamera.TargetCamera.focusDistance = focusDistance;
+            hdAdditionalCameraData.physicalParameters.aperture = aperture;
+            hdAdditionalCameraData.physicalParameters.focusDistance = focusDistance;
         }
 
         public override void OnClipDisable(LiveCamera liveCamera)
@@ -41,9 +41,8 @@ namespace CameraLiveProduction
             hdAdditionalCameraData = liveCamera.TargetCamera.GetComponent<HDAdditionalCameraData>();
             focalLength = liveCamera.TargetCamera.focalLength;
             shift = liveCamera.TargetCamera.lensShift;
-            aperture = liveCamera.TargetCamera.aperture;
-            focusDistance = liveCamera.TargetCamera.focusDistance;
-            // initialized = true;
+            aperture = hdAdditionalCameraData.physicalParameters.aperture;
+            focusDistance = hdAdditionalCameraData.physicalParameters.focusDistance;
         }
         
         public override void OnDestroy(LiveCamera camera)

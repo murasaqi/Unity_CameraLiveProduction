@@ -1,59 +1,16 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Experimental.Rendering;
-using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 namespace CameraLiveProduction
 {
-    [Serializable]
-    public enum DepthStencilFormat
-    {
-        NONE = 1,
-        D16_UNORM = 16,
-        D24_UNORM = 32,
-        D24_UNORM_S8_UINT = 24,
-        D32_SFLOAT = 32,
-        D32_SFLOAT_S8_UINT = 32,
-    }
-
-    [Serializable]
-    public enum ResolutionScale
-    {
-        x0_25,
-        x0_5,
-        x1,
-        x1_5,
-        x2,
-    }
-
-    [Serializable]
-    public enum AntiAliasing
-    {
-        NONE = 0,
-        x2 = 2,
-        x4 = 4,
-        x8 = 8,
-    }
-
-    [Serializable]
-
-    public class CameraRenderQueue
-    {
-        public LiveCamera camera = null;
-        public float inputWeight = 0.0f;
-    }
     [ExecuteAlways]
-    public class CameraMixer : MonoBehaviour
+    public class CameraToggleSwitcher:MonoBehaviour
     {
-        public bool useTimeline = false;
-        public LiveCamera camera1Queue;
-        public LiveCamera camera2Queue;
-        public LiveCamera cam1;
-        public LiveCamera cam2;
+        public Camera camera1Queue;
+        public Camera camera2Queue;
+        public Camera cam1;
+        public Camera cam2;
         public int width = 1920;
         public int height = 1080;
         public ResolutionScale resolutionScale = ResolutionScale.x1;
@@ -67,18 +24,30 @@ namespace CameraLiveProduction
         public AntiAliasing antiAliasing = AntiAliasing.NONE;
         public RenderTexture outputTarget;
         public RawImage outputImage;
-
-        public List<LiveCamera> cameraList = new List<LiveCamera>();
         public CameraRenderTiming cameraRenderTiming = CameraRenderTiming.Update;
-        void Start()
-        {
-
-        }
-
+        public List<Camera> cameraList = new List<Camera>();
+        
         public Vector2Int Resolution()
         {
             var scale = GetResolutionScale();
             return new Vector2Int(Mathf.CeilToInt(width * scale),  Mathf.CeilToInt(height * scale));
+        }
+        
+        public void RemoveCameraTargetTexture()
+        {
+
+            foreach (var liveCamera in cameraList)
+            {
+                if(liveCamera)liveCamera.targetTexture = null;
+            }
+            if (cam1 != null)
+            {
+                cam1.targetTexture = null;
+            }
+            if (cam2 != null)
+            {
+                cam2.targetTexture = null;
+            }
         }
         
         public void InitRenderTextures()
@@ -101,28 +70,20 @@ namespace CameraLiveProduction
             
             renderTexture2 = new RenderTexture(res.x, res.y, (int)depthStencilFormat, format);
             renderTexture2.antiAliasing = (int)antiAliasing;
+           
+            Render();
+        }
+
+        public void ApplyRenderTextureToTargets()
+        {
+            if(cam1 != null)cam1.targetTexture = renderTexture1;
+            if(cam2 != null)cam2.targetTexture = renderTexture2;
             if(material != null) material.SetTexture("_TextureA", renderTexture1);
             if(material != null) material.SetTexture("_TextureB", renderTexture2);
-            
         }
-
-        public void RemoveCameraTargetTexture()
-        {
-
-            foreach (var liveCamera in cameraList)
-            {
-                if(liveCamera)liveCamera.TargetCamera.targetTexture = null;
-            }
-            if (cam1 != null)
-            {
-                cam1.TargetCamera.targetTexture = null;
-            }
-            if (cam2 != null)
-            {
-                cam2.TargetCamera.targetTexture = null;
-            }
-        }
-
+        
+  
+        
         [ContextMenu("Initialize")]
         public void Initialize()
         {
@@ -130,17 +91,21 @@ namespace CameraLiveProduction
             shader = Resources.Load<Shader>("CameraSwitcherResources/Shader/CameraSwitcherFader");
             material = new Material(shader);
             InitRenderTextures();
-            if(cam1 != null)cam1.TargetCamera.targetTexture = renderTexture1;
-            if(cam2 != null)cam2.TargetCamera.targetTexture = renderTexture2;
-            material.SetTexture("_TextureA", renderTexture1);
-            material.SetTexture("_TextureB", renderTexture2);
+            ApplyRenderTextureToTargets();
+            if (outputImage != null) outputImage.material = material;
         }
 
+        // public void RefreshRender()
+        // {
+        //     InitRenderTextures();
+        //     ApplyRenderTextureToTargets();
+        // }
+        //
         private void OnDestroy()
         {
             DestroyImmediate(material);
-            if(cam1)cam1.TargetCamera.targetTexture = null;
-            if(cam2)cam2.TargetCamera.targetTexture = null;
+            if(cam1)cam1.targetTexture = null;
+            if(cam2)cam2.targetTexture = null;
             if(renderTexture1)DestroyImmediate(renderTexture1);
             if(renderTexture2)DestroyImmediate(renderTexture2);
            
@@ -154,24 +119,25 @@ namespace CameraLiveProduction
             if (cam1 != null)
             {
                 cam1.enabled = true;
-                cam1.TargetCamera.targetTexture = renderTexture1; 
+                cam1.targetTexture = renderTexture1; 
             }
 
             if (cam2 != null)
             {
                 cam2.enabled = true;
-                cam2.TargetCamera.targetTexture = renderTexture2;
+                cam2.targetTexture = renderTexture2;
             }
             
             // material.SetFloat("_CrossFade", fader);
             
         }
-
+        
+        
         public void BlitOutputTarget(RenderTexture dst)
         {
             Graphics.Blit(Texture2D.blackTexture, dst, material);
         }
-        public void SetCameraQueue(LiveCamera camera1, LiveCamera camera2 = null, float blend = 0f)
+        public void SetCameraQueue(Camera camera1, Camera camera2 = null, float blend = 0f)
         { 
             camera1Queue = camera1; 
             camera2Queue = camera2;
@@ -185,27 +151,24 @@ namespace CameraLiveProduction
             {
                 if(liveCamera == null) continue;
 
-                if (liveCamera.TargetCamera == null)
-                {
-                    liveCamera.Initialize();
-                }
+              
                 if (liveCamera == cam1 || liveCamera == cam2)
                 {
-                  liveCamera.TargetCamera.enabled = true;
+                    liveCamera.enabled = true;
                 }
                 else
                 {
-                    liveCamera.TargetCamera.enabled = false;
+                    liveCamera.enabled = false;
                 }
                 
-                liveCamera.TargetCamera.targetTexture = null;    
+                liveCamera.targetTexture = null;    
                 
             }
         }
-
+        
         public void Render()
         {
-          
+
             RefreshCamera();
             if(renderTexture1 == null || renderTexture2 == null || material == null)
             {
@@ -226,8 +189,11 @@ namespace CameraLiveProduction
 
         }
 
+      
         public void Update()
         {
+            
+            
             if(cameraRenderTiming == CameraRenderTiming.Update)
             {
                 Render();
@@ -252,37 +218,6 @@ namespace CameraLiveProduction
                     return 1f;
             }
         } 
-        // public void RenameCameraByClipName()
-        // {
-        //     var cameraClipDic = new Dictionary<Camera, string>();
-        //     
-        //     foreach (var clip in m_Clips)
-        //     {
-        //         var asset = clip.asset as CameraMixerTimelineClip;
-        //         if(asset == null)continue;
-        //         var clipName = clip.displayName;
-        //         var camera = asset.behaviour.camera;
-        //         if(camera == null) continue;
-        //         // Debug.Log($"{asset.newExposedReference.Resolve( playableDirector.playableGraph.GetResolver()).gameObject.name} {clipName}");
-        //         if (cameraClipDic.ContainsKey(camera))
-        //         {
-        //             Debug.Log("ContainsKey");
-        //             cameraClipDic[camera] = $"{cameraClipDic[camera]}_{clipName}";
-        //         }
-        //         else
-        //         {
-        //             Debug.Log("Not ContainsKey");
-        //             cameraClipDic.Add(camera,clipName);
-        //         }
-        //     }
-        //
-        //     foreach (var camera in cameraClipDic.Keys)
-        //     {
-        //         Debug.Log(cameraClipDic[camera]);
-        //         if(camera == null) continue;
-        //         camera.gameObject.name = cameraClipDic[camera];
-        //     }
-        // }
+        
     }
-
 }
