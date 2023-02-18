@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
@@ -36,6 +37,7 @@ namespace CameraLiveProduction
         readonly List<CameraMixerClipInfo> cameraQue = new List<CameraMixerClipInfo>();
         private TimelineAsset timelineAsset;
         internal PlayableDirector director;
+        internal CameraMixerTimelineTrack track;
         private bool isFirstFrameHappened = false;
         // NOTE: This function is called at runtime and edit time.  Keep that in mind when setting the values of properties.
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
@@ -64,13 +66,12 @@ namespace CameraLiveProduction
 
                 }
 
-                RenameCameraByClipName();
-
+                
             }
+
             
 
-            // var _director =   playable.GetGraph().GetResolver() as PlayableDirector;
-            // Debug.Log($"{director.name}:{director.time},{_director.name}:{_director.time}");
+
             int inputCount = playable.GetInputCount();
             cameraQue.Clear();
             var hasCamera = false;
@@ -79,15 +80,23 @@ namespace CameraLiveProduction
             for (int i = 0; i < inputCount; i++)
             {
                 var clip = timelineClips[i];
+                var cameraMixerTimelineClip = clip.asset as CameraMixerTimelineClip;
                 float inputWeight = playable.GetInputWeight(i);
                 ScriptPlayable<CameraMixerTimelineBehaviour> inputPlayable =
                     (ScriptPlayable<CameraMixerTimelineBehaviour>)playable.GetInput(i);
                 CameraMixerTimelineBehaviour input = inputPlayable.GetBehaviour();
                 input.cameraPostProductions.Distinct();
+
+
+
+#if UNITY_EDITOR
                 
-                
-                
-                
+                if (track.clipNameAsCameraName && cameraMixerTimelineClip != null && cameraMixerTimelineClip.camera != null)
+                {
+                    clip.displayName = cameraMixerTimelineClip.camera.gameObject.name;
+                }
+
+#endif
                 if (input.liveCamera != null && cameraMixer.cameraList.Contains(input.liveCamera) != true)
                 {
                     cameraMixer.cameraList.Add(input.liveCamera);
@@ -168,7 +177,7 @@ namespace CameraLiveProduction
                 }
             }
         }
-        
+
         public void RenameCameraByClipName()
         {
             var cameraClipDic = new Dictionary<Camera, string>();

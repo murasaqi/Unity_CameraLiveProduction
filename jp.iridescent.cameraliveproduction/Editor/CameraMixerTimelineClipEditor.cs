@@ -38,7 +38,6 @@ namespace CameraLiveProduction
         {
             EditorGUI.BeginChangeCheck();
 
-
             // var propertyTypes = SlmUtility.GetTypes(typeof(SlmAdditionalProperty));
 
             // propertyTypes.Remove(typeof(RollProperty));
