@@ -67,7 +67,7 @@ namespace CameraLiveProduction
         public AntiAliasing antiAliasing = AntiAliasing.NONE;
         public RenderTexture outputTarget;
         public RawImage outputImage;
-
+        [SerializeReference]public List<CameraMixerPostEffectBase> cameraMixerPostEffectBases = new List<CameraMixerPostEffectBase>();
         public List<LiveCamera> cameraList = new List<LiveCamera>();
         public CameraRenderTiming cameraRenderTiming = CameraRenderTiming.Update;
         void Start()
@@ -175,7 +175,16 @@ namespace CameraLiveProduction
         { 
             camera1Queue = camera1; 
             camera2Queue = camera2;
+            
             fader = blend;
+        }
+        
+        private void UpdateCameraMixerPostEffect()
+        {
+            foreach (var cameraMixerPostEffectBase in cameraMixerPostEffectBases)
+            {
+                cameraMixerPostEffectBase.UpdateEffect();
+            }
         }
         
         private void RefreshCamera()
@@ -205,7 +214,8 @@ namespace CameraLiveProduction
 
         public void Render()
         {
-          
+
+            UpdateCameraMixerPostEffect();
             RefreshCamera();
             if(renderTexture1 == null || renderTexture2 == null || material == null)
             {
@@ -226,8 +236,12 @@ namespace CameraLiveProduction
 
         }
 
-        public void Update()
+        public void LateUpdate()
         {
+            foreach (var camera in cameraList)
+            {
+                camera.cameraMixer = this;
+            }
             if(cameraRenderTiming == CameraRenderTiming.Update)
             {
                 Render();

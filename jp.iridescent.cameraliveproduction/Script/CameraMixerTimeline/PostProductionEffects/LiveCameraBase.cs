@@ -1,6 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+
+#if USE_HDRP
+using Cinemachine;
+using UnityEngine.Rendering.HighDefinition;
+#endif
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace CameraLiveProduction
 {
@@ -10,6 +16,14 @@ namespace CameraLiveProduction
        
         public Camera TargetCamera => cloneCamera ? cloneCamera: originalCamera;
         public Camera OriginalCamera => originalCamera;
+#if USE_CINEMACHINE
+        public CinemachineBrain cinemachineBrain;
+        public Volume cinemachineVolume;
+#endif
+
+#if USE_HDRP
+        public HDAdditionalCameraData hdAdditionalCameraData;
+#endif
         protected Camera originalCamera;
         [SerializeField]public Camera cloneCamera;
         public List<CameraPostProductionBase> postProduction = new List<CameraPostProductionBase>();

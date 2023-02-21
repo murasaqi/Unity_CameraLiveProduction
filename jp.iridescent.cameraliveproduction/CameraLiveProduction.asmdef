@@ -9,7 +9,8 @@
         "GUID:15fc0a57446b3144c949da3e2b9737a9",
         "GUID:457756d89b35d2941b3e7b37b4ece6f1",
         "GUID:6055be8ebefd69e48b49212b09b47b2f",
-        "GUID:3eae0364be2026648bf74846acb8a731"
+        "GUID:3eae0364be2026648bf74846acb8a731",
+        "GUID:4307f53044263cf4b835bd812fc161a4"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -28,6 +29,11 @@
             "name": "com.unity.render-pipelines.high-definition",
             "expression": "",
             "define": "USE_HDRP"
+        },
+        {
+            "name": "com.unity.cinemachine",
+            "expression": "",
+            "define": "USE_CINEMACHINE"
         }
     ],
     "noEngineReferences": false

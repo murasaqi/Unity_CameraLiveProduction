@@ -1,8 +1,8 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
     <ui:VisualElement name="Settings">
         <uie:Vector2IntField label="Resolution" name="ResolutionField" />
-        <ui:DropdownField label="Resolution Scale" index="-1" choices="System.Collections.Generic.List`1[System.String]" name="ResolutionScaleField" binding-path="resolutionScale" />
-        <ui:DropdownField label="Render Timing" index="-1" choices="System.Collections.Generic.List`1[System.String]" name="CameraRenderTimingField" binding-path="cameraRenderTiming" />
+        <uie:PropertyField name="ResolutionScaleField" binding-path="resolutionScale" />
+        <uie:PropertyField name="CameraRenderTimingField" binding-path="cameraRenderTiming" />
         <uie:EnumField label="Format" binding-path="format" name="RTFormatField" style="margin-top: 4px;" />
         <uie:EnumField label="Depth" binding-path="depthStencilFormat" name="RTDepthField" style="margin-top: 4px;" />
         <uie:EnumField label="AntiAliasing" binding-path="antiAliasing" name="RTAntiAliasingField" style="margin-top: 4px;" />
@@ -39,4 +39,5 @@
         </ui:VisualElement>
     </ui:VisualElement>
     <uie:PropertyField binding-path="material" />
+    <uie:PropertyField binding-path="cameraMixerPostEffectBases" name="CameraMixerPostEffectBasesField" />
 </ui:UXML>
