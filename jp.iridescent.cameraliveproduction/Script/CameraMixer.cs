@@ -183,7 +183,7 @@ namespace CameraLiveProduction
         {
             foreach (var cameraMixerPostEffectBase in cameraMixerPostEffectBases)
             {
-                cameraMixerPostEffectBase.UpdateEffect();
+                if(cameraMixerPostEffectBase!=null)cameraMixerPostEffectBase.UpdateEffect();
             }
         }
         

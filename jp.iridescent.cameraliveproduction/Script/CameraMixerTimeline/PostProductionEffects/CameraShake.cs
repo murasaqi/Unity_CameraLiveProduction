@@ -18,7 +18,7 @@ namespace CameraLiveProduction
 
             if (!liveCamera.hasCloneCamera)
             {
-                Debug.Log(liveCamera.cloneCamera);
+                // Debug.Log(liveCamera.cloneCamera);
                 Initialize(liveCamera);
             }
 
