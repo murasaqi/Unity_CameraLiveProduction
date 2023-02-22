@@ -26,6 +26,7 @@ namespace CameraLiveProduction
 #endif
         protected Camera originalCamera;
         [SerializeField]public Camera cloneCamera;
+        public CloneLiveCamera cloneLiveCamera;
         public List<CameraPostProductionBase> postProduction = new List<CameraPostProductionBase>();
         // public virtual Camera camera { get; }
         public bool hasCloneCamera => cloneCamera != null;
@@ -35,7 +36,7 @@ namespace CameraLiveProduction
             // Debug.Log($"Create {originalCamera.name}");
             if (originalCamera == null) return null;
             cloneCamera = Instantiate(originalCamera);
-            cloneCamera.gameObject.AddComponent<CloneLiveCamera>();
+            cloneLiveCamera = cloneCamera.gameObject.AddComponent<CloneLiveCamera>();
             originalCamera.enabled = !disableOriginalCamera;
             return cloneCamera;
         }

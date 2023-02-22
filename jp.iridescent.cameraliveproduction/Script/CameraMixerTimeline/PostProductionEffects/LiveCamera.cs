@@ -71,6 +71,11 @@ namespace CameraLiveProduction
         {
             if (cloneCamera != null)
             {
+                hdAdditionalCameraData = null;
+                if (cloneLiveCamera != null)
+                {
+                    
+                }
                 DestroyImmediate(cloneCamera);
             }
         }
