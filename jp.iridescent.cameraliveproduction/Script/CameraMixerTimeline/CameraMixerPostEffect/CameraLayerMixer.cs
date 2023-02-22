@@ -89,23 +89,23 @@ namespace CameraLiveProduction
             HDAdditionalCameraData hdAdditionalCameraData = liveCamera.hdAdditionalCameraData;
             if(hdAdditionalCameraData ==null) liveCamera.Initialize();
             var volumeLayerMask = hdAdditionalCameraData.volumeLayerMask;
-            CameraLayerUtility.Add(
+            volumeLayerMask=CameraLayerUtility.Add(
                 volumeLayerMask,
-                isCam1 ? layerMaskA : layerMaskB);
-            CameraLayerUtility.Remove(
+                isCam1 ? cameraALayerID : cameraBLayerID);
+            volumeLayerMask=CameraLayerUtility.Remove(
                 volumeLayerMask,
-                isCam1 ? layerMaskB : layerMaskA);
+                isCam1 ? cameraBLayerID : cameraALayerID);
             hdAdditionalCameraData.volumeLayerMask = volumeLayerMask;
             
 #endif
-//             var cullingMask = liveCamera.TargetCamera.cullingMask;
-//             liveCamera.TargetCamera.cullingMask = CameraLayerUtility.Add(
-//                 cullingMask,
-//                 isCam1 ? layerMaskA : layerMaskB);
-//             cullingMask = liveCamera.TargetCamera.cullingMask;
-//             liveCamera.TargetCamera.cullingMask = CameraLayerUtility.Remove(
-//                 cullingMask,
-//                 isCam1 ? layerMaskB : layerMaskA);
+             var cullingMask = liveCamera.TargetCamera.cullingMask;
+             cullingMask = CameraLayerUtility.Add(
+                 cullingMask,
+                 isCam1 ? cameraALayerID : cameraBLayerID);
+             cullingMask= CameraLayerUtility.Remove(
+                 cullingMask,
+                 isCam1 ? cameraBLayerID : cameraALayerID);
+             liveCamera.TargetCamera.cullingMask = cullingMask;
 //            
         }
 

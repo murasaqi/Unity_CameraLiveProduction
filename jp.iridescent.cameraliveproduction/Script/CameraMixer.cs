@@ -236,7 +236,7 @@ namespace CameraLiveProduction
 
         }
 
-        public void LateUpdate()
+        public void Update()
         {
             foreach (var camera in cameraList)
             {

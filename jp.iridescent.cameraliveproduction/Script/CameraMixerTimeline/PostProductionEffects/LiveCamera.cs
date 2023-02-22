@@ -59,10 +59,10 @@ namespace CameraLiveProduction
                 originalCamera = GetComponent<Camera>();
             }
 
-            if (cinemachineVolumeForceLayerChange != null && cinemachineVolumeForceLayerChange.volume != null)
-            {
-                cinemachineVolumeForceLayerChange.volume.gameObject.SetActive(TargetCamera.enabled);
-            }
+            // if (cinemachineVolumeForceLayerChange != null && cinemachineVolumeForceLayerChange.volume != null)
+            // {
+            //     cinemachineVolumeForceLayerChange.volume.gameObject.SetActive(TargetCamera.enabled);
+            // }
 
            
         }
