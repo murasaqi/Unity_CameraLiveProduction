@@ -66,6 +66,16 @@ namespace CameraLiveProduction
                     break;
                 }
             }
+            
+            foreach (var liveCamera in cameraMixer.cameraList)
+            {
+                
+                if (liveCamera != null && liveCamera.cinemachineVolumeForceLayerChange != null)
+                {
+                   liveCamera.cinemachineVolumeForceLayerChange.volume.enabled = false;
+                }
+            }
+            
 
             if (cameraMixer.cam1)
              {
@@ -77,6 +87,8 @@ namespace CameraLiveProduction
              {
                  SetLayer(cameraMixer.cam2, false);
              }
+             
+             
         }
 
         
@@ -107,6 +119,11 @@ namespace CameraLiveProduction
                  isCam1 ? cameraBLayerID : cameraALayerID);
              liveCamera.TargetCamera.cullingMask = cullingMask;
 //            
+
+            if (liveCamera != null && liveCamera.cinemachineVolumeForceLayerChange != null)
+            {
+                liveCamera.cinemachineVolumeForceLayerChange.volume.enabled = true;
+            }
         }
 
     }

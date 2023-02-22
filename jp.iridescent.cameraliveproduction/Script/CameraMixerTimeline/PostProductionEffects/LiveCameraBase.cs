@@ -32,7 +32,7 @@ namespace CameraLiveProduction
         public virtual void Initialize(){}
         public Camera CreateCameraClone(bool disableOriginalCamera = false)
         {
-            Debug.Log($"Create {originalCamera.name}");
+            // Debug.Log($"Create {originalCamera.name}");
             if (originalCamera == null) return null;
             cloneCamera = Instantiate(originalCamera);
             cloneCamera.gameObject.AddComponent<CloneLiveCamera>();
