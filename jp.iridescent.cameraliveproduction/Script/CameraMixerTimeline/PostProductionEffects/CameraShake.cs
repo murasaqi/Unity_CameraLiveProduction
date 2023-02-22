@@ -50,7 +50,7 @@ namespace CameraLiveProduction
             
             if (!liveCamera.hasCloneCamera)
             {
-                Debug.Log(liveCamera.cloneCamera);
+                // Debug.Log(liveCamera.cloneCamera);
                 var clone = liveCamera.CreateCameraClone(true);
                 clone.transform.SetParent(liveCamera.transform);
                 offsetPosition = Vector3.zero;
