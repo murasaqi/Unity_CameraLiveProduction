@@ -72,7 +72,7 @@ namespace CameraLiveProduction
                 
                 if (liveCamera != null && liveCamera.cinemachineVolumeForceLayerChange != null)
                 {
-                   liveCamera.cinemachineVolumeForceLayerChange.volume.enabled = false;
+                   if(liveCamera.cinemachineVolumeForceLayerChange.volume)liveCamera.cinemachineVolumeForceLayerChange.volume.enabled = false;
                 }
             }
             
