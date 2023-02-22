@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -15,7 +16,7 @@ namespace CameraLiveProduction
         // Start is called before the first frame update
 
         public Volume volume;
-        public CameraMixer cameraMixer;
+        // public CameraMixer cameraMixer;
 
         void Start()
         {
@@ -35,10 +36,10 @@ namespace CameraLiveProduction
         {
             if (volume == null)
             {
-                volume = transform.GetComponentInChildren<Volume>();
+                volume = transform.gameObject.GetComponentsInChildrenWithoutSelf<Volume>().First();
             }
 
-            if (volume == null || cameraMixer == null) return;
+            if (volume == null) return;
             // Debug.Log(transform.childCount);
             volume.gameObject.layer = gameObject.layer;
             
@@ -47,4 +48,5 @@ namespace CameraLiveProduction
 
         }
     }
+    
 }

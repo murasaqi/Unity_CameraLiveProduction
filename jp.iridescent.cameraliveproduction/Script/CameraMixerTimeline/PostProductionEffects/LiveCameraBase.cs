@@ -18,7 +18,7 @@ namespace CameraLiveProduction
         public Camera OriginalCamera => originalCamera;
 #if USE_CINEMACHINE
         public CinemachineBrain cinemachineBrain;
-        public Volume cinemachineVolume;
+        // public Volume cinemachineVolume;
 #endif
 
 #if USE_HDRP

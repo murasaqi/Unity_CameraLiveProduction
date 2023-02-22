@@ -29,6 +29,7 @@ namespace CameraLiveProduction
             Initialize();
         }
 
+        [ContextMenu("Initialize")]
         public override void Initialize()
         {
             originalCamera = GetComponent<Camera>();

@@ -240,7 +240,7 @@ namespace CameraLiveProduction
         {
             foreach (var camera in cameraList)
             {
-                camera.cameraMixer = this;
+                if(camera)camera.cameraMixer = this;
             }
             if(cameraRenderTiming == CameraRenderTiming.Update)
             {
