@@ -36,7 +36,11 @@ namespace CameraLiveProduction
         {
             if (volume == null)
             {
-                volume = transform.gameObject.GetComponentsInChildrenWithoutSelf<Volume>().First();
+                if (transform.childCount > 0)
+                {
+                    var volumes = transform.gameObject.GetComponentsInChildrenWithoutSelf<Volume>();
+                    if (volumes.Length > 0) volume = volumes.First();
+                }
             }
 
             if (volume == null) return;
