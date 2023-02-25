@@ -22,6 +22,7 @@ namespace CameraLiveProduction
 
         public void Initialize()
         {
+            if(camera == null) return;
             liveCamera = camera.GetComponent<LiveCamera>();
             if( liveCamera == null)
             {
