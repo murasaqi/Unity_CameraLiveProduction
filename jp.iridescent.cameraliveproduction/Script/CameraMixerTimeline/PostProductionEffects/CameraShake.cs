@@ -6,11 +6,14 @@ namespace CameraLiveProduction
     {
         
         public Vector3 offsetPosition = Vector3.zero;
+        public Vector3 offsetRotation = Vector3.zero;
         // public Vector3 shakeDirection = new Vector3(1, 1, 1);
-        public Vector3 shakeRange = new Vector3(0.3f, 0.3f, 0.3f);
+        public Vector3 positionShakeRange = new Vector3(0.3f, 0.3f, 0f);
+        public Vector3 rotationShakeRange = new Vector3(10f, 10f, 0f);
         public Vector3 noiseSeed = Vector3.zero;
         // public Vector3 noiseScale = new Vector3(1, 1, 1);
-        public Vector3 roughness = new Vector3(1, 1, 1);
+        public Vector3 positionRoughness = new Vector3(0.5f, 0.5f, 0.5f);
+        public Vector3 rotationRoughness = new Vector3(0.5f, 0.5f, 0.5f);
         public override void UpdateEffect(LiveCamera liveCamera,float time, float weight = 1f)
         {
             if(liveCamera == null)
@@ -21,16 +24,25 @@ namespace CameraLiveProduction
                 // Debug.Log(liveCamera.cloneCamera);
                 Initialize(liveCamera);
             }
-
-            // make 3d noise
-            Vector3 noise = new Vector3(
-                (Mathf.PerlinNoise( noiseSeed.x+time * roughness.x,0) - 0.5f)*shakeRange.x,
-                (Mathf.PerlinNoise(noiseSeed.y + time*roughness.y,0f) - 0.5f)*shakeRange.x,
-                (Mathf.PerlinNoise(noiseSeed.z +time * roughness.z, 0f)-0.5f)*shakeRange.z
+            // culculate 3d wiggler noise
+            var positionNoise = new Vector3(
+                (Mathf.PerlinNoise(noiseSeed.x + time * positionRoughness.x, 0)-0.5f) * positionShakeRange.x,
+                (Mathf.PerlinNoise(noiseSeed.y + time * positionRoughness.y, 0) - 0.5f ) * positionShakeRange.y,
+                (Mathf.PerlinNoise(noiseSeed.z + time * positionRoughness.z, 0)  - 0.5f ) * positionShakeRange.z
+            );
+            
+            var rotationNoise = new Vector3(
+                (Mathf.PerlinNoise(noiseSeed.x + time * rotationRoughness.x, 0) - 0.5f) * rotationShakeRange.x,
+                (Mathf.PerlinNoise(noiseSeed.y + time * rotationRoughness.y, 0) - 0.5f) * rotationShakeRange.y,
+                (Mathf.PerlinNoise(noiseSeed.z + time * rotationRoughness.z, 0) - 0.5f) * rotationShakeRange.z
             );
             
             // apply noise
-            liveCamera.TargetCamera.transform.localPosition = offsetPosition + noise;
+            liveCamera.TargetCamera.transform.localPosition = offsetPosition;// + positionNoise*weight;
+            liveCamera.TargetCamera.transform.localEulerAngles = offsetRotation;// + rotationNoise*weight;
+            
+            liveCamera.TargetCamera.transform.localPosition += positionNoise*weight;
+            liveCamera.TargetCamera.transform.localEulerAngles += rotationNoise*weight;
             
         }
 
@@ -39,6 +51,7 @@ namespace CameraLiveProduction
             if (liveCamera.hasCloneCamera)
             {
                 liveCamera.TargetCamera.transform.localPosition = Vector3.zero;
+                liveCamera.TargetCamera.transform.localEulerAngles = Vector3.zero;
             }
         }
 
@@ -55,6 +68,12 @@ namespace CameraLiveProduction
                 clone.transform.SetParent(liveCamera.transform);
                 offsetPosition = Vector3.zero;
             }
+            
+            noiseSeed = new Vector3(
+                UnityEngine.Random.Range(0f, 100f),
+                UnityEngine.Random.Range(0f, 100f),
+                UnityEngine.Random.Range(0f, 100f)
+            );
             // var clone = Instantiate(camera.gameObject);
         }
         
