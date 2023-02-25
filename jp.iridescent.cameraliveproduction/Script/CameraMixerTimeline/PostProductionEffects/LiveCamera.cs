@@ -35,13 +35,19 @@ namespace CameraLiveProduction
             originalCamera = GetComponent<Camera>();
 #if USE_CINEMACHINE
             cinemachineBrain = GetComponent<CinemachineBrain>();
-            if (useCinemachineVolumeSettings)
+            if (useCinemachineVolumeSettings&& cinemachineBrain)
             {
                 cinemachineVolumeForceLayerChange = GetComponent<CinemachineVolumeForceLayerChange>();
                 if (cinemachineVolumeForceLayerChange == null)
                 {
                     cinemachineVolumeForceLayerChange = gameObject.AddComponent<CinemachineVolumeForceLayerChange>();
                 }
+            }
+            else
+            {
+                cinemachineVolumeForceLayerChange = GetComponent<CinemachineVolumeForceLayerChange>();
+                if(cinemachineVolumeForceLayerChange != null)
+                    DestroyImmediate(cinemachineVolumeForceLayerChange);
             }
 #endif
 
