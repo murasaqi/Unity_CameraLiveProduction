@@ -33,12 +33,27 @@ namespace CameraLiveProduction
 //         public HDAdditionalCameraData hdAdditionalCameraDataA;
 //         public HDAdditionalCameraData hdAdditionalCameraDataB;
 // #endif
+
+        [ContextMenu("Force Initialize")]
+        public void ForceInitialize()
+        {
+            Init(GetComponent<CameraMixer>());
+        }
         public override void Init(CameraMixer cameraMixer)
         {
             base.Init(cameraMixer);
-            
-            
-            
+
+            foreach (var liveCamera in cameraMixer.cameraList)
+            {
+                if (liveCamera.cinemachineBrain != null)
+                {
+                    // destroy brain child objects
+                    foreach (Transform child in liveCamera.cinemachineBrain.transform)
+                    {
+                        if(child != liveCamera.cinemachineBrain.transform)DestroyImmediate(child.gameObject);
+                    }
+                }
+            }
         }
 
         private void OnEnable()
