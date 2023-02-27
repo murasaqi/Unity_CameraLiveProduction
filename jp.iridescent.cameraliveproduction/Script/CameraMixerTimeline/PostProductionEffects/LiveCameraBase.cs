@@ -46,7 +46,7 @@ namespace CameraLiveProduction
             var cloneCameras = transform.GetComponentsInChildren<CloneLiveCamera>();
             
             for( int i = cloneCameras.Length - 1; i >= 0; --i ){
-                DestroyImmediate( cloneCameras[i].gameObject );
+                if(cloneCameras[i].gameObject)DestroyImmediate( cloneCameras[i].gameObject );
             }
             
         }

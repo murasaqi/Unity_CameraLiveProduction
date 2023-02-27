@@ -134,6 +134,9 @@ namespace CameraLiveProduction
             if(cam2 != null)cam2.TargetCamera.targetTexture = renderTexture2;
             material.SetTexture("_TextureA", renderTexture1);
             material.SetTexture("_TextureB", renderTexture2);
+            // if contains null in camera list, remove it
+            cameraList = cameraList.Where(x => x != null).ToList();
+            
         }
 
         private void OnDestroy()

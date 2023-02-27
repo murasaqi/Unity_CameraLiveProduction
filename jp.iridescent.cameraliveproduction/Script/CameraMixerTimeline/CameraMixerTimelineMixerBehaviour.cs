@@ -120,7 +120,7 @@ namespace CameraLiveProduction
 
                 if (hasCamera && clip.start <= offsetTime && offsetTime < clip.start + clip.duration)
                 {
-                    input.liveCamera.TargetCamera.enabled = true;
+                    if(input.liveCamera)input.liveCamera.TargetCamera.enabled = true;
                     
                     // cameraQue.Add(new CameraMixerClipInfo(clip, input, inputWeight));
                 }
