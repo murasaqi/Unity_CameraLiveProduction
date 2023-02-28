@@ -15,7 +15,7 @@ namespace CameraLiveProduction
     {
         // Start is called before the first frame update
 
-        public Volume volume;
+        public List<Volume> volumes = new List<Volume>();
         // public CameraMixer cameraMixer;
 
         void Start()
@@ -23,29 +23,58 @@ namespace CameraLiveProduction
 
         }
 
-        public void OnDestroy()
+        public void Init()
         {
-            // DestroyImmediate(volume);
-            // RemovedComponent(volume);
+            volumes.Clear();
+        }
+        
+
+        private void OnEnable()
+        {
+            Init();
         }
 
+        public void OnDestroy()
+        {
+            Init();
+        }
+
+        
+        public void SetEnable(bool enable)
+        {
+            if (volumes == null || volumes.Count == 0) return;
+            foreach (var volume in volumes)
+            {
+                volume.enabled = enable;
+            }
+        }
 
 
         // Update is called once per frame
         void LateUpdate()
         {
-            if (volume == null)
+            if (volumes.Count==0)
             {
                 if (transform.childCount > 0)
                 {
-                    var volumes = transform.gameObject.GetComponentsInChildrenWithoutSelf<Volume>();
-                    if (volumes.Length > 0) volume = volumes.First();
+                    var _volumes = transform.gameObject.GetComponentsInChildrenWithoutSelf<Volume>();
+                    if (_volumes.Length > 0)
+                    {
+                        foreach(var volume in _volumes)
+                        {
+                            // Debug.Log($"{volume.name}, {volume.hideFlags}");
+                            if(volume.hideFlags == HideFlags.HideAndDontSave)volumes.Add(volume);
+                        }
+                    }
                 }
             }
 
-            if (volume == null) return;
+            if (volumes == null || volumes.Count == 0) return;
             // Debug.Log(transform.childCount);
-            volume.gameObject.layer = gameObject.layer;
+            foreach (var volume in volumes)
+            {
+                volume.gameObject.layer = gameObject.layer;   
+            }
             
             
 

@@ -53,6 +53,11 @@ namespace CameraLiveProduction
                         if(child != liveCamera.cinemachineBrain.transform)DestroyImmediate(child.gameObject);
                     }
                 }
+
+                if (liveCamera.cinemachineVolumeForceLayerChange)
+                {
+                    liveCamera.cinemachineVolumeForceLayerChange.Init();
+                }
             }
         }
 
@@ -87,7 +92,7 @@ namespace CameraLiveProduction
                 
                 if (liveCamera != null && liveCamera.cinemachineVolumeForceLayerChange != null)
                 {
-                   if(liveCamera.cinemachineVolumeForceLayerChange.volume)liveCamera.cinemachineVolumeForceLayerChange.volume.enabled = false;
+                   if(liveCamera.cinemachineVolumeForceLayerChange)liveCamera.cinemachineVolumeForceLayerChange.SetEnable(false);
                 }
             }
             
@@ -137,7 +142,7 @@ namespace CameraLiveProduction
 
             if (liveCamera != null && liveCamera.cinemachineVolumeForceLayerChange != null)
             {
-                if(liveCamera.cinemachineVolumeForceLayerChange.volume)liveCamera.cinemachineVolumeForceLayerChange.volume.enabled = true;
+                if(liveCamera.cinemachineVolumeForceLayerChange)liveCamera.cinemachineVolumeForceLayerChange.SetEnable(true);
             }
         }
 
