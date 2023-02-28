@@ -45,6 +45,8 @@ namespace CameraLiveProduction
 
             foreach (var liveCamera in cameraMixer.cameraList)
             {
+                if(liveCamera ==null) continue;
+                
                 if (liveCamera.cinemachineBrain != null)
                 {
                     // destroy brain child objects
