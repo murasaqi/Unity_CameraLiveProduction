@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 
 #if USE_HDRP
-using Cinemachine;
 using UnityEngine.Rendering.HighDefinition;
 #endif
+
+#if USE_CINEMACHINE
+using Cinemachine;
+#endif
+
 using UnityEngine;
-using UnityEngine.Rendering;
 
 namespace CameraLiveProduction
 {

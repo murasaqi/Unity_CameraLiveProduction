@@ -46,7 +46,7 @@ namespace CameraLiveProduction
             foreach (var liveCamera in cameraMixer.cameraList)
             {
                 if(liveCamera ==null) continue;
-                
+#if USE_CINEMACHINE
                 if (liveCamera.cinemachineBrain != null)
                 {
                     // destroy brain child objects
@@ -55,6 +55,7 @@ namespace CameraLiveProduction
                         if(child != liveCamera.cinemachineBrain.transform)DestroyImmediate(child.gameObject);
                     }
                 }
+#endif
 
                 if (liveCamera.cinemachineVolumeForceLayerChange)
                 {

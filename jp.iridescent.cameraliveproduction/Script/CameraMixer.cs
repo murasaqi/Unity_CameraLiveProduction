@@ -64,7 +64,7 @@ namespace CameraLiveProduction
         [Range(0, 1)] public float fader = 0f;
         public Shader shader;
         [SerializeField] private Material material;
-        public AntiAliasing antiAliasing = AntiAliasing.NONE;
+        public AntiAliasing antiAliasing = AntiAliasing.x2;
         public RenderTexture outputTarget;
         public RawImage outputImage;
         [SerializeReference]public List<CameraMixerPostEffectBase> cameraMixerPostEffectBases = new List<CameraMixerPostEffectBase>();

@@ -77,7 +77,9 @@ namespace CameraLiveProduction
         {
             if (cloneCamera != null)
             {
+#if USE_HDRP
                 hdAdditionalCameraData = null;
+#endif
                 if (cloneLiveCamera != null)
                 {
                     
