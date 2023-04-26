@@ -6,6 +6,8 @@ using UnityEngine.Rendering;
 #if USE_HDRP
 
 using UnityEngine.Rendering.HighDefinition;
+#elif USE_URP
+using UnityEngine.Rendering.Universal;
 
 #endif
 
@@ -114,7 +116,7 @@ namespace CameraLiveProduction
              
         }
 
-        
+
         private void SetLayer(LiveCamera liveCamera, bool isCam1)
         {
 
@@ -124,16 +126,29 @@ namespace CameraLiveProduction
             HDAdditionalCameraData hdAdditionalCameraData = liveCamera.hdAdditionalCameraData;
             if(hdAdditionalCameraData ==null) liveCamera.Initialize();
             var volumeLayerMask = hdAdditionalCameraData.volumeLayerMask;
-            volumeLayerMask=CameraLayerUtility.Add(
+            volumeLayerMask = CameraLayerUtility.Add(
                 volumeLayerMask,
                 isCam1 ? cameraALayerID : cameraBLayerID);
-            volumeLayerMask=CameraLayerUtility.Remove(
+            volumeLayerMask = CameraLayerUtility.Remove(
                 volumeLayerMask,
                 isCam1 ? cameraBLayerID : cameraALayerID);
             hdAdditionalCameraData.volumeLayerMask = volumeLayerMask;
-            
+
+#elif USE_URP
+
+            UniversalAdditionalCameraData universalAdditionalCameraData = liveCamera.GetComponent<UniversalAdditionalCameraData>();
+            if(universalAdditionalCameraData ==null) liveCamera.Initialize();
+            var volumeLayerMask = universalAdditionalCameraData.volumeLayerMask;
+            volumeLayerMask = CameraLayerUtility.Add(
+                volumeLayerMask,
+                isCam1 ? cameraALayerID : cameraBLayerID);
+            volumeLayerMask = CameraLayerUtility.Remove(
+                volumeLayerMask,
+                isCam1 ? cameraBLayerID : cameraALayerID);
+            universalAdditionalCameraData.volumeLayerMask = volumeLayerMask;
 #endif
-             var cullingMask = liveCamera.TargetCamera.cullingMask;
+
+        var cullingMask = liveCamera.TargetCamera.cullingMask;
              cullingMask = CameraLayerUtility.Add(
                  cullingMask,
                  isCam1 ? cameraALayerID : cameraBLayerID);
