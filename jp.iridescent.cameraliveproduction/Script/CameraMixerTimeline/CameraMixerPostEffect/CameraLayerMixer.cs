@@ -147,7 +147,7 @@ namespace CameraLiveProduction
                 isCam1 ? cameraBLayerID : cameraALayerID);
             universalAdditionalCameraData.volumeLayerMask = volumeLayerMask;
 #endif
-
+        if(liveCamera == null || liveCamera.TargetCamera == null) return;
         var cullingMask = liveCamera.TargetCamera.cullingMask;
              cullingMask = CameraLayerUtility.Add(
                  cullingMask,
