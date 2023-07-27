@@ -82,7 +82,7 @@ namespace CameraLiveProduction
                     break;
                 }
             }
-
+            
             for (int i = 0; i < 32; ++i)
             {
                 if ((layerMaskB & (1 << i)) != 0)
@@ -100,19 +100,19 @@ namespace CameraLiveProduction
                    if(liveCamera.cinemachineVolumeForceLayerChange)liveCamera.cinemachineVolumeForceLayerChange.SetEnable(false);
                 }
             }
-            
-
+            //
+            //
             if (cameraMixer.cam1)
              {
                  SetLayer(cameraMixer.cam1, true);
                  
              }
-             
-             if(cameraMixer.cam2)
-             {
-                 SetLayer(cameraMixer.cam2, false);
-             }
-             
+            //  
+            if(cameraMixer.cam2)
+            {
+                SetLayer(cameraMixer.cam2, false);
+            }
+            //  
              
         }
 
@@ -120,7 +120,8 @@ namespace CameraLiveProduction
         private void SetLayer(LiveCamera liveCamera, bool isCam1)
         {
 
-            liveCamera.gameObject.layer = isCam1 ? cameraALayerID : cameraBLayerID;
+            var currentLayerID= isCam1 ? cameraALayerID : cameraBLayerID;
+            if (currentLayerID !=liveCamera.gameObject.layer) liveCamera.gameObject.layer = currentLayerID;
 #if USE_HDRP
 
             HDAdditionalCameraData hdAdditionalCameraData = liveCamera.hdAdditionalCameraData;
@@ -136,8 +137,9 @@ namespace CameraLiveProduction
 
 #elif USE_URP
 
-            UniversalAdditionalCameraData universalAdditionalCameraData = liveCamera.GetComponent<UniversalAdditionalCameraData>();
+            UniversalAdditionalCameraData universalAdditionalCameraData = liveCamera.universalAdditionalCameraData;
             if(universalAdditionalCameraData ==null) liveCamera.Initialize();
+            if (universalAdditionalCameraData == null) return;
             var volumeLayerMask = universalAdditionalCameraData.volumeLayerMask;
             volumeLayerMask = CameraLayerUtility.Add(
                 volumeLayerMask,
@@ -147,16 +149,16 @@ namespace CameraLiveProduction
                 isCam1 ? cameraBLayerID : cameraALayerID);
             universalAdditionalCameraData.volumeLayerMask = volumeLayerMask;
 #endif
-        if(liveCamera == null || liveCamera.TargetCamera == null) return;
-        var cullingMask = liveCamera.TargetCamera.cullingMask;
-             cullingMask = CameraLayerUtility.Add(
-                 cullingMask,
-                 isCam1 ? cameraALayerID : cameraBLayerID);
-             cullingMask= CameraLayerUtility.Remove(
-                 cullingMask,
-                 isCam1 ? cameraBLayerID : cameraALayerID);
-             liveCamera.TargetCamera.cullingMask = cullingMask;
-//            
+            if(liveCamera == null || liveCamera.TargetCamera == null) return;
+            var cullingMask = liveCamera.TargetCamera.cullingMask;
+            cullingMask = CameraLayerUtility.Add(
+             cullingMask,
+             isCam1 ? cameraALayerID : cameraBLayerID);
+            cullingMask= CameraLayerUtility.Remove(
+             cullingMask,
+             isCam1 ? cameraBLayerID : cameraALayerID);
+            liveCamera.TargetCamera.cullingMask = cullingMask;
+
 
             if (liveCamera != null && liveCamera.cinemachineVolumeForceLayerChange != null)
             {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 #if USE_HDRP
 using UnityEngine.Rendering.HighDefinition;
@@ -24,6 +25,10 @@ namespace CameraLiveProduction
         public CameraMixer cameraMixer;
         public bool useCinemachineVolumeSettings = true;
         public CinemachineVolumeForceLayerChange cinemachineVolumeForceLayerChange;
+
+#if USE_URP
+        public UniversalAdditionalCameraData universalAdditionalCameraData;
+#endif
         private void OnEnable()
         {
             Initialize();
@@ -53,6 +58,9 @@ namespace CameraLiveProduction
 
 #if USE_HDRP
             hdAdditionalCameraData = GetComponent<HDAdditionalCameraData>();
+#endif
+#if USE_URP
+            universalAdditionalCameraData = GetComponent<UniversalAdditionalCameraData>();
 #endif
             
         }
