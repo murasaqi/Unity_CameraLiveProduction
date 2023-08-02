@@ -21,6 +21,7 @@ namespace CameraLiveProduction
         public bool clipNameAsCameraName = true;
         public ExposedReference<TextMeshProUGUI> debugText;
         // public CameraRenderTiming cameraRenderTiming = CameraRenderTiming.Timeline;
+        public int preRenderFrame = 4;
         public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
         {
             var mixer= ScriptPlayable<CameraMixerTimelineMixerBehaviour>.Create(graph, inputCount);
