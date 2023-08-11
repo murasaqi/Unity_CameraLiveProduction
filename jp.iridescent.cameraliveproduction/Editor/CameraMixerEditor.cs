@@ -149,22 +149,6 @@ namespace CameraLiveProduction
             camera1Preview.style.height =   camera1Image.style.height;
             camera2Preview.style.height =   camera1Image.style.height;
 
-            // var borderWidth = 2;
-            // camera2Image.style.borderBottomWidth = borderWidth;
-            // camera2Image.style.borderLeftWidth = borderWidth;
-            // camera2Image.style.borderRightWidth = borderWidth;
-            // camera2Image.style.borderTopWidth = borderWidth;
-            // camera2Image.style.borderBottomColor = new Color(0,0,0,1f);
-            //
-            // camera1Image.style.borderBottomWidth = borderWidth;
-            // camera1Image.style.borderLeftWidth = borderWidth;
-            // camera1Image.style.borderRightWidth = borderWidth;
-            // camera1Image.style.borderTopWidth = borderWidth;
-            // camera1Image.style.borderBottomColor = new Color(0,0,0,1f);
-            
-            // camera1Image.style.width
-            // camera2Image.style.width = camera2.layout.width;
-
             if (cameraMixer.outputTarget != null)
             {
                 outputImage.image = cameraMixer.outputTarget;
@@ -172,13 +156,15 @@ namespace CameraLiveProduction
             else if (cameraMixer.outputImage != null)
             {
                 outputImage.image = outputThumbnail;
-
             }
             
-            outputImage.style.height = camera1.layout.width * aspectRatio;
-            
-            previewWidth = camera1.layout.width;
-            
+            var outPutHeight = Mathf.Min(200,camera1.layout.width * aspectRatio);
+            var outPutWidth = outPutHeight / aspectRatio;
+            outputImage.style.height = outPutHeight;
+            outputImage.style.marginBottom = 10;
+            // outputImage.style.width = outPutWidth;
+            previewWidth = outPutWidth;
+
         }
 
         private void OnDestroy()

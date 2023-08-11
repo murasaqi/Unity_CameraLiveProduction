@@ -60,23 +60,17 @@ namespace CameraLiveProduction
                 {
                     var cameraMixerTimelineClip = clip.asset as CameraMixerTimelineClip;
                     var cameraMixerTimelineBehaviour = cameraMixerTimelineClip.behaviour;
-                    // cameraMixerTimelineBehaviour.Initialize();
                     cameraMixerTimelineBehaviour.cameraPostProductions.RemoveAll(x => x == null);
                     cameraMixerTimelineBehaviour.cameraPostProductions.RemoveAll(x => cameraMixerTimelineBehaviour.cameraPostProductions.Any(y => y.GetType() == x.GetType() && x!= y));
 
                 }
-
-                
             }
-
-            
-
 
             int inputCount = playable.GetInputCount();
             cameraQue.Clear();
-            var hasCamera = false;
             currentTime = (float)director.time;
-            var offsetTime = director.time + (1 / timelineAsset.editorSettings.frameRate)*3;
+            // var offsetStartDuration = offsetStartFrame / timelineAsset.editorSettings.frameRate;
+            var offsetTime = director.time + (1 / timelineAsset.editorSettings.frameRate)*track.preRenderFrame;
             for (int i = 0; i < inputCount; i++)
             {
                 var clip = timelineClips[i];
@@ -102,33 +96,31 @@ namespace CameraLiveProduction
                     cameraMixer.cameraList.Add(input.liveCamera);
                 }
 
-                if (inputWeight > 0)
+                if (cameraQue.Count == 0)
                 {
-                    hasCamera = true;
-                    cameraQue.Add(new CameraMixerClipInfo(clip, input, inputWeight));
-                }
-                else
-                {
-                    foreach (var postProduction in input.cameraPostProductions)
+                    if (clip.start <= currentTime && currentTime < clip.start + clip.duration)
                     {
-                        if (postProduction.progress != 0f)
-                        {
-                            postProduction.UpdateEffect(input.liveCamera,0f,0f);
-                        }
+                        if (input.liveCamera) input.liveCamera.TargetCamera.enabled = true;
+                        cameraQue.Add(new CameraMixerClipInfo(clip, input, inputWeight));
+
+                    }
+                    else
+                    {
+                        UpdatePostEffect(input);
+                    }
+                }else
+                {
+                    if (clip.start <= offsetTime && offsetTime < clip.start + clip.duration)
+                    {
+                        if (input.liveCamera) input.liveCamera.TargetCamera.enabled = true;
+                        cameraQue.Add(new CameraMixerClipInfo(clip, input, inputWeight));
+
+                    }
+                    else
+                    {
+                        UpdatePostEffect(input);
                     }
                 }
-
-                if (hasCamera && clip.start <= offsetTime && offsetTime < clip.start + clip.duration)
-                {
-                    if(input.liveCamera)input.liveCamera.TargetCamera.enabled = true;
-                    
-                    // cameraQue.Add(new CameraMixerClipInfo(clip, input, inputWeight));
-                }
-                // {
-                //     cameraQue.Add(new CameraSwitcherClipInfo(clip, input, inputWeight));
-                //     Debug.Log($"time: {clip.displayName} {input.camera.name}, {clip.start}, {clip.duration}");
-                //    
-                // }
                 
             }
             
@@ -162,6 +154,17 @@ namespace CameraLiveProduction
         {
             isFirstFrameHappened = false;
             if(cameraMixer)cameraMixer.useTimeline = false;
+        }
+
+        private void UpdatePostEffect( CameraMixerTimelineBehaviour input)
+        {
+            foreach (var postProduction in input.cameraPostProductions)
+            {
+                if (postProduction.progress != 0f)
+                {
+                    postProduction.UpdateEffect(input.liveCamera, 0f, 0f);
+                }
+            }
         }
 
         private void ApplyPostEffect(List<CameraMixerClipInfo> clipInfos)
