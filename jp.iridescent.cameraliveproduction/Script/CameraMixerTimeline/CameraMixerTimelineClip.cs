@@ -12,10 +12,10 @@ namespace CameraLiveProduction
     public class CameraMixerTimelineClip : PlayableAsset, ITimelineClipAsset
     {
         public CameraMixerTimelineBehaviour behaviour = new CameraMixerTimelineBehaviour();
-        public ExposedReference<Camera> newExposedReference;
+        public ExposedReference<LiveCamera> newExposedReference;
         public CameraMixerTimelineBehaviour clone;
         public CameraMixerTimelineTrack track;
-        public Camera camera;
+        public LiveCamera liveCamera;
         // public Camera Camera => clone.camera;
         public ClipCaps clipCaps
         {
@@ -26,8 +26,8 @@ namespace CameraLiveProduction
         {
             var playable = ScriptPlayable<CameraMixerTimelineBehaviour>.Create(graph, behaviour);
             clone = playable.GetBehaviour();
-            camera = newExposedReference.Resolve(graph.GetResolver());
-            clone.camera = camera;
+            liveCamera = newExposedReference.Resolve(graph.GetResolver());
+            clone.liveCamera = liveCamera;
             clone.Initialize();
             return playable;
         }

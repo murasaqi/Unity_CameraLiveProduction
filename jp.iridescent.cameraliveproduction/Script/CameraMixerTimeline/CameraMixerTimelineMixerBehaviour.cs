@@ -11,16 +11,14 @@ using UnityEngine.Timeline;
 namespace CameraLiveProduction
 {
 
-    public class CameraMixerClipInfo
+    public struct CameraMixerClipInfo
     {
-        public TimelineClip clip;
-        public CameraMixerTimelineBehaviour behaviour;
+        public LiveCamera liveCamera;
         public float inputWeight;
        
-        public CameraMixerClipInfo(TimelineClip clip, CameraMixerTimelineBehaviour behaviour, float inputWeight)
+        public CameraMixerClipInfo(LiveCamera liveCamera, float inputWeight)
         {
-            this.clip = clip;
-            this.behaviour = behaviour;
+            this.liveCamera = liveCamera;
             this.inputWeight = inputWeight;
         }
         
@@ -35,6 +33,8 @@ namespace CameraLiveProduction
         private CameraMixer cameraMixer;
         
         readonly List<CameraMixerClipInfo> cameraQue = new List<CameraMixerClipInfo>();
+        private CameraMixerClipInfo cameraA = new CameraMixerClipInfo( null, 0f);
+        private CameraMixerClipInfo cameraB = new CameraMixerClipInfo( null, 0f);
         private TimelineAsset timelineAsset;
         internal PlayableDirector director;
         internal CameraMixerTimelineTrack track;
@@ -75,19 +75,21 @@ namespace CameraLiveProduction
             {
                 var clip = timelineClips[i];
                 var cameraMixerTimelineClip = clip.asset as CameraMixerTimelineClip;
+                
                 float inputWeight = playable.GetInputWeight(i);
                 ScriptPlayable<CameraMixerTimelineBehaviour> inputPlayable =
                     (ScriptPlayable<CameraMixerTimelineBehaviour>)playable.GetInput(i);
                 CameraMixerTimelineBehaviour input = inputPlayable.GetBehaviour();
                 input.cameraPostProductions.Distinct();
+                // Debug.Log($"{cameraMixerTimelineClip.liveCamera}, {input.liveCamera}");
+                // if(inputWeight >0f) Debug.Log($"{input.liveCamera}");
 
-
-
+                
 #if UNITY_EDITOR
                 
-                if (track.clipNameAsCameraName && cameraMixerTimelineClip != null && cameraMixerTimelineClip.camera != null)
+                if (track.clipNameAsCameraName && cameraMixerTimelineClip != null && cameraMixerTimelineClip.liveCamera != null)
                 {
-                    clip.displayName = cameraMixerTimelineClip.camera.gameObject.name;
+                    clip.displayName = cameraMixerTimelineClip.liveCamera.gameObject.name;
                 }
 
 #endif
@@ -96,13 +98,14 @@ namespace CameraLiveProduction
                     cameraMixer.cameraList.Add(input.liveCamera);
                 }
 
+
                 if (cameraQue.Count == 0)
                 {
                     if (clip.start <= currentTime && currentTime < clip.start + clip.duration)
                     {
                         if (input.liveCamera) input.liveCamera.TargetCamera.enabled = true;
-                        cameraQue.Add(new CameraMixerClipInfo(clip, input, inputWeight));
-
+                        cameraQue.Add(new CameraMixerClipInfo(cameraMixerTimelineClip.liveCamera, inputWeight));
+                        
                     }
                     else
                     {
@@ -113,8 +116,7 @@ namespace CameraLiveProduction
                     if (clip.start <= offsetTime && offsetTime < clip.start + clip.duration)
                     {
                         if (input.liveCamera) input.liveCamera.TargetCamera.enabled = true;
-                        cameraQue.Add(new CameraMixerClipInfo(clip, input, inputWeight));
-
+                        cameraQue.Add(new CameraMixerClipInfo(cameraMixerTimelineClip.liveCamera, inputWeight));
                     }
                     else
                     {
@@ -124,9 +126,9 @@ namespace CameraLiveProduction
                 
             }
             
-            
+            cameraQue.Sort( (a, b) => a.inputWeight.CompareTo(b.inputWeight));
             SetCameraQueue(cameraQue);
-            ApplyPostEffect(cameraQue);
+            // ApplyPostEffect(cameraQue);
 
             if (debugText != null)
             {
@@ -167,19 +169,19 @@ namespace CameraLiveProduction
             }
         }
 
-        private void ApplyPostEffect(List<CameraMixerClipInfo> clipInfos)
-        {
-            foreach (var clipInfo in clipInfos)
-            {
-                foreach (var cameraPostProduction in clipInfo.behaviour.cameraPostProductions)
-                {
-                    if (cameraPostProduction != null)
-                    {
-                        if(clipInfo.behaviour.liveCamera.GetComponent<Camera>())cameraPostProduction.UpdateEffect(clipInfo.behaviour.liveCamera,currentTime);
-                    }
-                }
-            }
-        }
+        // private void ApplyPostEffect(List<CameraMixerClipInfo> clipInfos)
+        // {
+        //     foreach (var clipInfo in clipInfos)
+        //     {
+        //         foreach (var cameraPostProduction in clipInfo.behaviour.cameraPostProductions)
+        //         {
+        //             if (cameraPostProduction != null)
+        //             {
+        //                 if(clipInfo.behaviour.liveCamera.GetComponent<Camera>())cameraPostProduction.UpdateEffect(clipInfo.behaviour.liveCamera,currentTime);
+        //             }
+        //         }
+        //     }
+        // }
 
         public void RenameCameraByClipName()
         {
@@ -194,7 +196,7 @@ namespace CameraLiveProduction
                 // {
                 //     asset.behaviour.liveCamera.Initialize();
                 // }
-                var camera = asset.behaviour.camera;
+                var camera = asset.behaviour.liveCamera.TargetCamera;
                 if(camera == null) continue;
                 
                 Debug.Log($"{clipName} {camera.gameObject.name}");
@@ -227,13 +229,13 @@ namespace CameraLiveProduction
             if (clips.Count == 1)
             {
                
-                if(clips[0].behaviour.liveCamera.GetComponent<Camera>() == null) return;
-                cameraMixer.SetCameraQueue(clips[0].behaviour.liveCamera,null,0);
+                if(clips[0].liveCamera.TargetCamera == null) return;
+                cameraMixer.SetCameraQueue(clips[0].liveCamera,null,0);
             }
             else if (clips.Count == 2)
             {
-                if(clips[0].behaviour.liveCamera.GetComponent<Camera>() == null || clips[1].behaviour.liveCamera.GetComponent<Camera>() == null) return;
-                cameraMixer.SetCameraQueue(clips[0].behaviour.liveCamera, clips[1].behaviour.liveCamera, 1f-clips[0].inputWeight);
+                if(clips[0].liveCamera.TargetCamera == null || clips[1].liveCamera.TargetCamera == null) return;
+                cameraMixer.SetCameraQueue(clips[0].liveCamera, clips[1].liveCamera, 1f-clips[1].inputWeight);
             }
             
             
