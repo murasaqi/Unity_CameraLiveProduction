@@ -235,7 +235,7 @@ namespace CameraLiveProduction
             else if (clips.Count == 2)
             {
                 if(clips[0].liveCamera.TargetCamera == null || clips[1].liveCamera.TargetCamera == null) return;
-                cameraMixer.SetCameraQueue(clips[0].liveCamera, clips[1].liveCamera, 1f-clips[1].inputWeight);
+                cameraMixer.SetCameraQueue(clips[0].liveCamera, clips[1].liveCamera, 1f-clips[0].inputWeight);
             }
             
             
