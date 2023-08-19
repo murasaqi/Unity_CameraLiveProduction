@@ -1,9 +1,13 @@
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
+using UnityEditor;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 
 namespace CameraLiveProduction
 {
@@ -25,23 +29,19 @@ namespace CameraLiveProduction
         public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
         {
             var mixer= ScriptPlayable<CameraMixerTimelineMixerBehaviour>.Create(graph, inputCount);
-
+            m_Clips.Sort( (a,b)=>a.start.CompareTo(b.start));
             foreach (var clip in m_Clips)
             {
                 var cameraMixerTimelineClip = clip.asset as CameraMixerTimelineClip;
                 if(cameraMixerTimelineClip)cameraMixerTimelineClip.track = this;
-
-                // if (clipNameAsCameraName && cameraMixerTimelineClip != null && cameraMixerTimelineClip.camera != null)
-                // {
-                //     clip.displayName = cameraMixerTimelineClip.camera.gameObject.name;
-                // }
             }
+            AssetDatabase.SaveAssets();
+            
+
             mixer.GetBehaviour().timelineClips = m_Clips;
             mixer.GetBehaviour().debugText = debugText.Resolve(graph.GetResolver());
             mixer.GetBehaviour().director = go.GetComponent<PlayableDirector>();
             mixer.GetBehaviour().track = this;
-            // mixer.GetBehaviour().cameraRenderTiming = cameraRenderTiming;
-            // RenameCameraByClipName();
             return mixer;
         }
 
