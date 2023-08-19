@@ -67,12 +67,10 @@ namespace CameraLiveProduction
                 }
             }
 
-            int inputCount = playable.GetInputCount();
             cameraQue.Clear();
             currentTime = (float)director.time;
-            // var offsetStartDuration = offsetStartFrame / timelineAsset.editorSettings.frameRate;
             var offsetTime = director.time + (1 / timelineAsset.editorSettings.frameRate)*track.preRenderFrame;
-            for (int i = 0; i < inputCount; i++)
+            for (int i = 0; i < timelineClips.Count; i++)
             {
                 var clip = timelineClips[i];
                 var cameraMixerTimelineClip = clip.asset as CameraMixerTimelineClip;
@@ -82,10 +80,7 @@ namespace CameraLiveProduction
                     (ScriptPlayable<CameraMixerTimelineBehaviour>)playable.GetInput(i);
                 CameraMixerTimelineBehaviour input = inputPlayable.GetBehaviour();
                 input.cameraPostProductions.Distinct();
-                // Debug.Log($"{cameraMixerTimelineClip.liveCamera}, {input.liveCamera}");
-                // if(inputWeight >0f) Debug.Log($"{input.liveCamera}");
 
-                
 #if UNITY_EDITOR
                 
                 if (track.clipNameAsCameraName && cameraMixerTimelineClip != null && cameraMixerTimelineClip.liveCamera != null)
@@ -106,7 +101,6 @@ namespace CameraLiveProduction
                     {
                         if (input.liveCamera) input.liveCamera.TargetCamera.enabled = true;
                         cameraQue.Add(new CameraMixerClipInfo(cameraMixerTimelineClip.liveCamera, inputWeight));
-                        
                     }
                     else
                     {
@@ -142,8 +136,6 @@ namespace CameraLiveProduction
                 stringBuilder.Append("f  ");
                 
                 debugText.text = stringBuilder.ToString();
-                // if (A != null && A.behaviour.camera != null) _stringBuilder.Append($"{A.behaviour.camera.name}");
-                // if (B != null && B.behaviour.camera != null) _stringBuilder.Append($" >> {B.behaviour.camera.name}");
 
             }
 
@@ -192,11 +184,7 @@ namespace CameraLiveProduction
                 var asset = clip.asset as CameraMixerTimelineClip;
                 if(asset == null)continue;
                 var clipName = clip.displayName;
-                // Debug.Log($"{clipName},{asset.behaviour.liveCamera.OriginalCamera}");
-                // if (asset.behaviour.liveCamera.OriginalCamera == null)
-                // {
-                //     asset.behaviour.liveCamera.Initialize();
-                // }
+               
                 var camera = asset.behaviour.liveCamera.TargetCamera;
                 if(camera == null) continue;
                 
@@ -238,7 +226,7 @@ namespace CameraLiveProduction
                 if(clips[0].liveCamera.TargetCamera == null || clips[1].liveCamera.TargetCamera == null) return;
                 var dissolveWeight = clips[1].inputWeight == 0f ? 0f : 1f - clips[0].inputWeight;
                 cameraMixer.SetCameraQueue(clips[0].liveCamera, clips[1].liveCamera, dissolveWeight);
-                Debug.Log($"A:{clips[0].liveCamera.TargetCamera.name} {clips[0].inputWeight}, B:{clips[1].liveCamera.TargetCamera.name} {clips[1].inputWeight}");
+                // Debug.Log($"A:{clips[0].liveCamera.TargetCamera.name} {clips[0].inputWeight}, B:{clips[1].liveCamera.TargetCamera.name} {clips[1].inputWeight}");
             }
             
             

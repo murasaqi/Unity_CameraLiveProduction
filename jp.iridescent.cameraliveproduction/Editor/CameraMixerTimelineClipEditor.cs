@@ -22,15 +22,15 @@ namespace CameraLiveProduction
             var cameraSwitcherTimelineClip = serializedObject.targetObject  as CameraMixerTimelineClip;
             
             EditorGUI.BeginChangeCheck();
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("newExposedReference"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("behaviour"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("camera"));
+            // EditorGUILayout.PropertyField(serializedObject.FindProperty("behaviour"));
             if (EditorGUI.EndChangeCheck())
             {
                 serializedObject.ApplyModifiedProperties();
             }
            
             
-            DrawAddPropertyButton(cameraSwitcherTimelineClip);
+            // DrawAddPropertyButton(cameraSwitcherTimelineClip);
             // DrawPropertyInInspector(stageLightProfile.FindProperty("stageLightProperties"));
         }
         

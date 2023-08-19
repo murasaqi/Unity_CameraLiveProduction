@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 using UnityEngine.Rendering;
+using UnityEngine.Serialization;
 
 namespace CameraLiveProduction
 {
@@ -12,7 +13,7 @@ namespace CameraLiveProduction
     public class CameraMixerTimelineClip : PlayableAsset, ITimelineClipAsset
     {
         public CameraMixerTimelineBehaviour behaviour = new CameraMixerTimelineBehaviour();
-        public ExposedReference<LiveCamera> newExposedReference;
+        [FormerlySerializedAs("newExposedReference")] public ExposedReference<LiveCamera> camera;
         public CameraMixerTimelineBehaviour clone;
         public CameraMixerTimelineTrack track;
         public LiveCamera liveCamera;
@@ -26,7 +27,7 @@ namespace CameraLiveProduction
         {
             var playable = ScriptPlayable<CameraMixerTimelineBehaviour>.Create(graph, behaviour);
             clone = playable.GetBehaviour();
-            liveCamera = newExposedReference.Resolve(graph.GetResolver());
+            liveCamera = camera.Resolve(graph.GetResolver());
             clone.liveCamera = liveCamera;
             clone.Initialize();
             return playable;
