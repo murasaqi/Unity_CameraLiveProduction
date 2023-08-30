@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
 
 #if USE_HDRP
 using UnityEngine.Rendering.HighDefinition;
+#endif
+
+#if USE_URP
+using UnityEngine.Rendering.Universal;
 #endif
 
 #if USE_CINEMACHINE
