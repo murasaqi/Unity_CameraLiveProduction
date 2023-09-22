@@ -1,13 +1,11 @@
-using System.Collections.Generic;
-using System.Linq;
 using TMPro;
-using UnityEditor;
-using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
-using UnityEngine.Rendering;
-using UnityEngine.SceneManagement;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace CameraLiveProduction
 {
@@ -35,7 +33,9 @@ namespace CameraLiveProduction
                 var cameraMixerTimelineClip = clip.asset as CameraMixerTimelineClip;
                 if(cameraMixerTimelineClip)cameraMixerTimelineClip.track = this;
             }
+#if UNITY_EDITOR
             AssetDatabase.SaveAssets();
+#endif
             
 
             mixer.GetBehaviour().timelineClips = m_Clips;
