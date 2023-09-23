@@ -61,6 +61,8 @@ namespace CameraLiveProduction
         public DepthStencilFormat depthStencilFormat = DepthStencilFormat.D32_SFLOAT_S8_UINT;
         public RenderTexture renderTexture1;
         public RenderTexture renderTexture2;
+        public RenderTexture debugOverlayTexture;
+        private Texture2D clearTexture;
         [Range(0, 1)] public float fader = 0f;
         public Shader shader;
         [SerializeField] private Material material;
@@ -134,6 +136,8 @@ namespace CameraLiveProduction
             if(cam2 != null)cam2.TargetCamera.targetTexture = renderTexture2;
             material.SetTexture("_TextureA", renderTexture1);
             material.SetTexture("_TextureB", renderTexture2);
+            if (clearTexture == null) clearTexture = new Texture2D(2, 2, TextureFormat.BGRA32, false);
+            clearTexture.SetPixel(0, 0, new Color(0,0, 0,0));
             // if contains null in camera list, remove it
             cameraList = cameraList.Where(x => x != null).ToList();
             
@@ -146,6 +150,7 @@ namespace CameraLiveProduction
             if(cam2)cam2.TargetCamera.targetTexture = null;
             if(renderTexture1)DestroyImmediate(renderTexture1);
             if(renderTexture2)DestroyImmediate(renderTexture2);
+            if(clearTexture)DestroyImmediate(clearTexture);
            
         }
 
@@ -234,6 +239,11 @@ namespace CameraLiveProduction
             {
                 outputImage.material = material;
             }
+            
+            material.SetTexture("_TextureDebugOverlay", debugOverlayTexture);
+            // material.SetTexture("_TextureDebugOverlay", debugOverlayTexture == null ? clearTexture : debugOverlayTexture);
+
+            
             ApplyCameraQueue();
             material.SetFloat("_CrossFade", fader);
 

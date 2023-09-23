@@ -5,6 +5,7 @@ Shader "Unlit/CameraSwitcherFader"
         _MainTex ("Base (RGB)", 2D) = "white" {}
         _TextureA ("_TextureA", 2D) = "white" {}
         _TextureB ("_TextureB", 2D) = "white" {}
+        _TextureDebugOverlay ("_TextureDebugOverlay", 2D) = "black" {}
         _CrossFade("CrossFade", Range(0,1)) = 0
         _WigglerValueA("WigglerA", Vector) = (0,0,0,0)
         _ClipSizeA("_WigglerRangeA",Vector) = (0,0,0,0)
@@ -52,6 +53,9 @@ Shader "Unlit/CameraSwitcherFader"
             sampler2D_float _TextureB;
             float4 _TextureB_ST;
 
+            sampler2D_float _TextureDebugOverlay;
+            float4 _TextureDebugOverlay_ST;
+
             float _CrossFade;
             float2 _WigglerValueA;
             float2 _ClipSizeA;
@@ -89,6 +93,7 @@ Shader "Unlit/CameraSwitcherFader"
                 float2 uv_b = r_b+pivot_uv;
                 float4  colA = tex2D(_TextureA, uv_a+_WigglerValueA);
                 float4  colB = tex2D(_TextureB, uv_b+_WigglerValueB);
+                float4 debugOverlay = tex2D(_TextureDebugOverlay, i.uv);
                 // sample the texture
                
                 if(_BlendA == 1)
@@ -122,6 +127,10 @@ Shader "Unlit/CameraSwitcherFader"
                 }
 
                  float4 col = lerp(colA,colB,_CrossFade);
+
+                 col = lerp(col,debugOverlay,debugOverlay.a);
+                // col = float4(debugOverlay.a, 0, 0, 1);
+                // col = debugOverlay;
 
                 
                 // apply fog
