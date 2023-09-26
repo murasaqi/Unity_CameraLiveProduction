@@ -72,9 +72,12 @@ namespace CameraLiveProduction
         [SerializeReference]public List<CameraMixerPostEffectBase> cameraMixerPostEffectBases = new List<CameraMixerPostEffectBase>();
         public List<LiveCamera> cameraList = new List<LiveCamera>();
         public CameraRenderTiming cameraRenderTiming = CameraRenderTiming.Update;
-        void Start()
+        
+        public Material initialMaterial;
+        
+        private void Start()
         {
-
+            initialMaterial = new Material(material);
         }
 
         public Vector2Int Resolution()
@@ -151,7 +154,8 @@ namespace CameraLiveProduction
             if(renderTexture1)DestroyImmediate(renderTexture1);
             if(renderTexture2)DestroyImmediate(renderTexture2);
             if(clearTexture)DestroyImmediate(clearTexture);
-           
+
+            Destroy(initialMaterial);
         }
 
 
@@ -179,12 +183,13 @@ namespace CameraLiveProduction
         {
             Graphics.Blit(Texture2D.blackTexture, dst, material);
         }
-        public void SetCameraQueue(LiveCamera camera1, LiveCamera camera2 = null, float blend = 0f)
+        public void SetCameraQueue(LiveCamera camera1, LiveCamera camera2 = null, float blend = 0f, Material material = null)
         { 
             camera1Queue = camera1; 
             camera2Queue = camera2;
             
             fader = blend;
+            this.material = material ? material : initialMaterial;
         }
         
         private void UpdateCameraMixerPostEffect()

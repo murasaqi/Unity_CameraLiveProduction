@@ -5,6 +5,7 @@ using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Playables;
+using UnityEngine.Serialization;
 using UnityEngine.Timeline;
 
 namespace CameraLiveProduction
@@ -14,11 +15,13 @@ namespace CameraLiveProduction
     {
         public LiveCamera liveCamera;
         public float inputWeight;
+        public Material material;
        
-        public CameraMixerClipInfo(LiveCamera liveCamera, float inputWeight)
+        public CameraMixerClipInfo(LiveCamera liveCamera, float inputWeight, Material material)
         {
             this.liveCamera = liveCamera;
             this.inputWeight = inputWeight;
+            this.material = material;
         }
         
         
@@ -69,6 +72,8 @@ namespace CameraLiveProduction
             cameraQue.Clear();
             currentTime = (float)director.time;
             var offsetTime = director.time + (1 / timelineAsset.editorSettings.frameRate)*track.preRenderFrame;
+            Material material1 = null;
+            var timeMax = double.MinValue;
             for (int i = 0; i < timelineClips.Count; i++)
             {
                 var clip = timelineClips[i];
@@ -79,6 +84,7 @@ namespace CameraLiveProduction
                     (ScriptPlayable<CameraMixerTimelineBehaviour>)playable.GetInput(i);
                 CameraMixerTimelineBehaviour input = inputPlayable.GetBehaviour();
                 input.cameraPostProductions.Distinct();
+                var inputPlayableTime = inputPlayable.GetTime();
 
 #if UNITY_EDITOR
                 
@@ -99,7 +105,7 @@ namespace CameraLiveProduction
                     if (clip.start <= currentTime && currentTime < clip.start + clip.duration)
                     {
                         if (input.liveCamera) input.liveCamera.TargetCamera.enabled = true;
-                        cameraQue.Add(new CameraMixerClipInfo(cameraMixerTimelineClip.liveCamera, inputWeight));
+                        cameraQue.Add(new CameraMixerClipInfo(cameraMixerTimelineClip.liveCamera, inputWeight, input.material));
                     }
                     else
                     {
@@ -110,7 +116,7 @@ namespace CameraLiveProduction
                     if (clip.start <= offsetTime && offsetTime < clip.start + clip.duration)
                     {
                         if (input.liveCamera) input.liveCamera.TargetCamera.enabled = true;
-                        cameraQue.Add(new CameraMixerClipInfo(cameraMixerTimelineClip.liveCamera, inputWeight));
+                        cameraQue.Add(new CameraMixerClipInfo(cameraMixerTimelineClip.liveCamera, inputWeight, input.material));
                     }
                     else
                     {
@@ -118,10 +124,27 @@ namespace CameraLiveProduction
                     }
                 }
                 
+                if(inputWeight is > 0f and < 1.0f)
+                {
+                    if (timeMax < inputPlayableTime)
+                    {
+                        if (material1 == null)
+                        {
+                            material1 = input.material;
+                            timeMax = inputPlayableTime;
+                        }
+                        else
+                        {
+                            material1 = input.material;
+                            timeMax = inputPlayableTime;
+                        }
+                    }
+                }
+                
             }
             
             cameraQue.Sort( (a, b) => a.inputWeight.CompareTo(b.inputWeight));
-            SetCameraQueue(cameraQue);
+            SetCameraQueue(cameraQue, material1);
             // ApplyPostEffect(cameraQue);
 
             if (debugText != null)
@@ -209,7 +232,7 @@ namespace CameraLiveProduction
 
         }
 
-        private void SetCameraQueue(List<CameraMixerClipInfo> clips)
+        private void SetCameraQueue(List<CameraMixerClipInfo> clips, Material material)
         {
             if(cameraMixer == null) return;
             if(clips.Count<=0) return;
@@ -224,7 +247,7 @@ namespace CameraLiveProduction
             {
                 if(clips[0].liveCamera.TargetCamera == null || clips[1].liveCamera.TargetCamera == null) return;
                 var dissolveWeight = clips[1].inputWeight == 0f ? 0f : 1f - clips[0].inputWeight;
-                cameraMixer.SetCameraQueue(clips[0].liveCamera, clips[1].liveCamera, dissolveWeight);
+                cameraMixer.SetCameraQueue(clips[0].liveCamera, clips[1].liveCamera, dissolveWeight, material);
                 // Debug.Log($"A:{clips[0].liveCamera.TargetCamera.name} {clips[0].inputWeight}, B:{clips[1].liveCamera.TargetCamera.name} {clips[1].inputWeight}");
             }
             

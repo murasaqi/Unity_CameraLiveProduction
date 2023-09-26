@@ -23,6 +23,7 @@ namespace CameraLiveProduction
             
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(serializedObject.FindProperty("camera"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("material"));
             // EditorGUILayout.PropertyField(serializedObject.FindProperty("behaviour"));
             if (EditorGUI.EndChangeCheck())
             {

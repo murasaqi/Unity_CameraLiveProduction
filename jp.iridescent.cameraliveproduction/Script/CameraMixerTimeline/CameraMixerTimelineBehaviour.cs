@@ -12,6 +12,7 @@ namespace CameraLiveProduction
         // public Camera camera;
         [HideInInspector] public LiveCamera liveCamera = null;
         [SerializeReference] public List<CameraPostProductionBase> cameraPostProductions = new List<CameraPostProductionBase>();
+        public Material material;
         public override void OnPlayableCreate(Playable playable)
         {
            

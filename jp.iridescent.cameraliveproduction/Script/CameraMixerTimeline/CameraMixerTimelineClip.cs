@@ -15,7 +15,9 @@ namespace CameraLiveProduction
         public CameraMixerTimelineBehaviour clone;
         public CameraMixerTimelineTrack track;
         public LiveCamera liveCamera;
+        public Material material;
         // public Camera Camera => clone.camera;
+        
         public ClipCaps clipCaps
         {
             get { return ClipCaps.Blending; }
@@ -27,6 +29,7 @@ namespace CameraLiveProduction
             clone = playable.GetBehaviour();
             liveCamera = camera.Resolve(graph.GetResolver());
             clone.liveCamera = liveCamera;
+            clone.material = material;
             clone.Initialize();
             return playable;
         }

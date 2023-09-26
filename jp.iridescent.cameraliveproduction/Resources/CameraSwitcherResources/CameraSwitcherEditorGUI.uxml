@@ -17,6 +17,7 @@
                 <ui:VisualElement style="flex-direction: column; min-width: auto; align-items: stretch; justify-content: space-around; flex-wrap: nowrap; width: 100%; margin-left: 0; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0;">
                     <uie:ObjectField binding-path="cam1" name="Cam1Field" style="justify-content: space-around; width: 100%; margin-left: 0; margin-right: 0; margin-top: 1px; margin-bottom: 1px;" />
                     <ui:DropdownField index="-1" choices="System.Collections.Generic.List`1[System.String]" name="CameraList1" style="justify-content: space-around; width: 100%; margin-left: 0; margin-right: 0; margin-top: 1px; margin-bottom: 1px;" />
+                    <uie:ObjectField type="UnityEngine.RenderTexture, UnityEngine.CoreModule" name="renderTexture1" binding-path="renderTexture1" />
                 </ui:VisualElement>
             </ui:VisualElement>
             <ui:VisualElement name="Camera2" style="align-items: center; min-width: auto; flex-wrap: nowrap; width: 50%; padding-left: 5px; padding-right: 5px;">
@@ -25,6 +26,7 @@
                 <ui:VisualElement style="flex-direction: column; min-width: auto; align-items: stretch; justify-content: space-around; width: 100%; margin-left: 0; margin-right: 0; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0;">
                     <uie:ObjectField binding-path="cam2" name="Cam2Field" style="justify-content: space-around; width: 100%; margin-left: 0; margin-right: 0; margin-top: 1px; margin-bottom: 1px;" />
                     <ui:DropdownField index="-1" choices="System.Collections.Generic.List`1[System.String]" name="CameraList2" style="justify-content: space-around; width: 100%; margin-left: 0; margin-right: 0; margin-top: 1px; margin-bottom: 1px;" />
+                    <uie:ObjectField type="UnityEngine.RenderTexture, UnityEngine.CoreModule" name="renderTexture2" binding-path="renderTexture2" />
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
@@ -39,6 +41,6 @@
             <ui:Label text="Output" display-tooltip-when-elided="true" />
         </ui:VisualElement>
     </ui:VisualElement>
-    <uie:PropertyField binding-path="material" />
+    <uie:ObjectField name="material" allow-scene-objects="true" type="UnityEngine.Material, UnityEngine.CoreModule" focusable="true" binding-path="material" />
     <uie:PropertyField binding-path="cameraMixerPostEffectBases" name="CameraMixerPostEffectBasesField" />
 </ui:UXML>

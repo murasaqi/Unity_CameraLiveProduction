@@ -99,7 +99,7 @@ namespace CameraLiveProduction
                 }
     
             }
-            
+
             popUpField1.choices = cameraList;
             popUpField1.index = cameraMixer.camera1Queue == null ? -1 : cameraMixer.cameraList.IndexOf(cameraMixer.camera1Queue);
             popUpField1.RegisterValueChangedCallback((v) =>
@@ -117,6 +117,13 @@ namespace CameraLiveProduction
                 var index = popUpField2.index;
                 cameraMixer.camera2Queue = index >= 0 && index < cameraMixer.cameraList.Count ? cameraMixer.cameraList[index] : null;
             });
+
+            var materialProperty = root.Q<ObjectField>("material");
+            materialProperty.RegisterValueChangedCallback(evt =>
+            {
+                cameraMixer.initialMaterial = evt.newValue as Material;
+            });
+            
 
             Resize();
             
