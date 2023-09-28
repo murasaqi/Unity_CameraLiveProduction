@@ -119,9 +119,9 @@ namespace CameraLiveProduction
             });
 
             var materialProperty = root.Q<ObjectField>("material");
-            materialProperty.RegisterValueChangedCallback(evt =>
+            materialProperty.RegisterCallback<BlurEvent>(evt =>
             {
-                cameraMixer.initialMaterial = evt.newValue as Material;
+                cameraMixer.initialMaterial = materialProperty.value as Material;
             });
             
 
