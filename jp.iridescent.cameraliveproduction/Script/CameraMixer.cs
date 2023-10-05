@@ -230,10 +230,6 @@ namespace CameraLiveProduction
 
             UpdateCameraMixerPostEffect();
             RefreshCamera();
-            if(renderTexture1 == null || renderTexture2 == null || material == null)
-            {
-                Initialize();
-            }
 
             if (outputTarget != null)
             {
