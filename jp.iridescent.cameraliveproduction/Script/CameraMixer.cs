@@ -151,13 +151,27 @@ namespace CameraLiveProduction
             DestroyImmediate(material);
             if(cam1)cam1.TargetCamera.targetTexture = null;
             if(cam2)cam2.TargetCamera.targetTexture = null;
-            if(renderTexture1)DestroyImmediate(renderTexture1);
-            if(renderTexture2)DestroyImmediate(renderTexture2);
+
+            SafeDestroyRenderTexture(renderTexture1);
+            SafeDestroyRenderTexture(renderTexture2);
+
             if(clearTexture)DestroyImmediate(clearTexture);
 
-            Destroy(initialMaterial);
+            if (Application.isEditor && !Application.isPlaying)
+            {
+                DestroyImmediate(initialMaterial);
+            }
+            else
+            {
+                Destroy(initialMaterial);
+            }
         }
 
+        private void SafeDestroyRenderTexture(RenderTexture renderTexture)
+        {
+            if(renderTexture && !UnityEditor.AssetDatabase.Contains(renderTexture))
+                DestroyImmediate(renderTexture);
+        }
 
         private void ApplyCameraQueue()
         {
