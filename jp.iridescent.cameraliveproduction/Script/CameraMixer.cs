@@ -74,10 +74,14 @@ namespace CameraLiveProduction
         public CameraRenderTiming cameraRenderTiming = CameraRenderTiming.Update;
         
         public Material initialMaterial;
-        
+
+        private readonly List<RenderTexture> _renderTexturesToBeDestroyed = new List<RenderTexture>();
+        private readonly List<Material> _materialsToBeDestroyed = new List<Material>();
+
         private void Start()
         {
             initialMaterial = new Material(material);
+            _materialsToBeDestroyed.Add(initialMaterial);
         }
 
         public Vector2Int Resolution()
@@ -91,20 +95,24 @@ namespace CameraLiveProduction
             RemoveCameraTargetTexture();
             if (renderTexture1 != null)
             {
+                _renderTexturesToBeDestroyed.Remove(renderTexture1);
                 renderTexture1.Release();
                 DestroyImmediate(renderTexture1);
             }
             if (renderTexture2 != null)
             {
+                _renderTexturesToBeDestroyed.Remove(renderTexture2);
                 renderTexture2.Release();
                 DestroyImmediate(renderTexture2);
             }
             
             var res = Resolution();
             renderTexture1 = new RenderTexture(res.x, res.y, (int)depthStencilFormat, format);
+            _renderTexturesToBeDestroyed.Add(renderTexture1);
             renderTexture1.antiAliasing = (int)antiAliasing;
             
             renderTexture2 = new RenderTexture(res.x, res.y, (int)depthStencilFormat, format);
+            _renderTexturesToBeDestroyed.Add(renderTexture2);
             renderTexture2.antiAliasing = (int)antiAliasing;
             if(material != null) material.SetTexture("_TextureA", renderTexture1);
             if(material != null) material.SetTexture("_TextureB", renderTexture2);
@@ -131,9 +139,10 @@ namespace CameraLiveProduction
         [ContextMenu("Initialize")]
         public void Initialize()
         {
-            if(material)DestroyImmediate(material);
+            if(material)SafeDestroyMaterial(material);
             shader = Resources.Load<Shader>("CameraSwitcherResources/Shader/CameraSwitcherFader");
             material = new Material(shader);
+            _materialsToBeDestroyed.Add(material);
             InitRenderTextures();
             if(cam1 != null)cam1.TargetCamera.targetTexture = renderTexture1;
             if(cam2 != null)cam2.TargetCamera.targetTexture = renderTexture2;
@@ -148,7 +157,7 @@ namespace CameraLiveProduction
 
         private void OnDestroy()
         {
-            DestroyImmediate(material);
+            SafeDestroyMaterial(material);
             if(cam1)cam1.TargetCamera.targetTexture = null;
             if(cam2)cam2.TargetCamera.targetTexture = null;
 
@@ -169,8 +178,16 @@ namespace CameraLiveProduction
 
         private void SafeDestroyRenderTexture(RenderTexture renderTexture)
         {
-            if(renderTexture && !UnityEditor.AssetDatabase.Contains(renderTexture))
-                DestroyImmediate(renderTexture);
+            if (!renderTexture || !_renderTexturesToBeDestroyed.Contains(renderTexture)) return;
+            _renderTexturesToBeDestroyed.Remove(renderTexture);
+            DestroyImmediate(renderTexture);
+        }
+
+        private void SafeDestroyMaterial(Material material)
+        {
+            if (!material || !_materialsToBeDestroyed.Contains(material)) return;
+            _materialsToBeDestroyed.Remove(material);
+            DestroyImmediate(material);
         }
 
         private void ApplyCameraQueue()
