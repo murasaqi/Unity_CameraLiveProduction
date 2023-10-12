@@ -1,5 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
     <ui:VisualElement name="Settings">
+        <uie:ObjectField name="fadeMaterialField" allow-scene-objects="true" type="UnityEngine.Material, UnityEngine.CoreModule" focusable="true" binding-path="fadeMaterial" label="FadeMaterial" />
         <uie:Vector2IntField label="Resolution" name="ResolutionField" />
         <uie:PropertyField name="ResolutionScaleField" binding-path="resolutionScale" />
         <uie:PropertyField name="CameraRenderTimingField" binding-path="cameraRenderTiming" />
@@ -33,6 +34,7 @@
         <ui:VisualElement style="margin-left: 3px; margin-right: 3px; margin-top: 1px; margin-bottom: 1px; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0;">
             <ui:Slider picking-mode="Ignore" value="0" high-value="1" binding-path="fader" />
         </ui:VisualElement>
+        <uie:ObjectField name="InstantiatedFadeMaterialField" allow-scene-objects="true" type="UnityEngine.Material, UnityEngine.CoreModule" focusable="true" binding-path="instantiatedFadeMaterial" label="Instantiated Material" />
     </ui:VisualElement>
     <ui:VisualElement style="padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; margin-left: 0; margin-right: 0; margin-top: 8px; margin-bottom: 0;">
         <uie:PropertyField name="OutputImage" binding-path="outputImage" style="margin-left: 3px; margin-right: 3px; margin-top: 1px; margin-bottom: 1px;" />
@@ -41,6 +43,5 @@
             <ui:Label text="Output" display-tooltip-when-elided="true" />
         </ui:VisualElement>
     </ui:VisualElement>
-    <uie:ObjectField name="material" allow-scene-objects="true" type="UnityEngine.Material, UnityEngine.CoreModule" focusable="true" binding-path="material" />
     <uie:PropertyField binding-path="cameraMixerPostEffectBases" name="CameraMixerPostEffectBasesField" />
 </ui:UXML>
