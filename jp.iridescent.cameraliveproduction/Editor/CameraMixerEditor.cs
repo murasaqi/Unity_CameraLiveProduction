@@ -123,13 +123,25 @@ namespace CameraLiveProduction
                     : null;
             });
 
-            var materialProperty = root.Q<ObjectField>("fadeMaterialField");
-            materialProperty.RegisterCallback<BlurEvent>(evt =>
-            {
-                cameraMixer.fadeMaterial = materialProperty.value as Material;
-            });
 
-            root.Q<ObjectField>("InstantiatedFadeMaterialField").SetEnabled(false);
+            var fadeSettingField = root.Q<DropdownField>("FadeSettingField");
+            var fadeSettingList = new List<string>();
+            foreach (var fadeSetting in cameraMixer.fadeMaterialSettings)
+            {
+                fadeSettingList.Add(fadeSetting.name);
+            }
+
+            fadeSettingField.choices = fadeSettingList;
+            fadeSettingField.index = cameraMixer.fadeMaterialSettings.IndexOf(cameraMixer.currentFadeMaterialSetting);
+            fadeSettingField.RegisterValueChangedCallback((v) =>
+            {
+                if (cameraMixer.fadeMaterialSettings.IndexOf(cameraMixer.currentFadeMaterialSetting) ==
+                    fadeSettingField.index) return;
+                var index = fadeSettingField.index;
+                cameraMixer.currentFadeMaterialSetting = index >= 0 && index < cameraMixer.fadeMaterialSettings.Count
+                    ? cameraMixer.fadeMaterialSettings[index]
+                    : null;
+            });
 
 
             Resize();

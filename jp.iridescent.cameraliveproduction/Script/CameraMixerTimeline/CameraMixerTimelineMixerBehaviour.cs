@@ -10,22 +10,20 @@ using UnityEngine.Timeline;
 
 namespace CameraLiveProduction
 {
-
     public struct CameraMixerClipInfo
     {
         public LiveCamera liveCamera;
         public float inputWeight;
-        public Material material;
-       
-        public CameraMixerClipInfo(LiveCamera liveCamera, float inputWeight, Material material)
+        public int fadeMaterialSettingIndex;
+
+        public CameraMixerClipInfo(LiveCamera liveCamera, float inputWeight, int fadeMaterialSettingIndex)
         {
             this.liveCamera = liveCamera;
             this.inputWeight = inputWeight;
-            this.material = material;
+            this.fadeMaterialSettingIndex = fadeMaterialSettingIndex;
         }
-        
-        
     }
+
     public class CameraMixerTimelineMixerBehaviour : PlayableBehaviour
     {
         public TextMeshProUGUI debugText;
@@ -33,15 +31,15 @@ namespace CameraLiveProduction
         private float currentTime;
         public List<TimelineClip> timelineClips = new List<TimelineClip>();
         private CameraMixer cameraMixer;
-        
+
         readonly List<CameraMixerClipInfo> cameraQue = new List<CameraMixerClipInfo>();
-        // private CameraMixerClipInfo cameraA = new CameraMixerClipInfo( null, 0f);
-        // private CameraMixerClipInfo cameraB = new CameraMixerClipInfo( null, 0f);
-        // private CameraMixerClipInfo cameraB_ = new CameraMixerClipInfo( null, 0f);
+
         private TimelineAsset timelineAsset;
         internal PlayableDirector director;
         internal CameraMixerTimelineTrack track;
+
         private bool isFirstFrameHappened = false;
+
         // NOTE: This function is called at runtime and edit time.  Keep that in mind when setting the values of properties.
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {
@@ -49,11 +47,11 @@ namespace CameraLiveProduction
 
             if (!cameraMixer || !director)
                 return;
-            
-            if(isFirstFrameHappened == false)
+
+            if (isFirstFrameHappened == false)
             {
                 stringBuilder = new StringBuilder();
-                
+
                 timelineAsset = director.playableAsset as TimelineAsset;
 
                 isFirstFrameHappened = true;
@@ -64,21 +62,22 @@ namespace CameraLiveProduction
                     var cameraMixerTimelineClip = clip.asset as CameraMixerTimelineClip;
                     var cameraMixerTimelineBehaviour = cameraMixerTimelineClip.behaviour;
                     cameraMixerTimelineBehaviour.cameraPostProductions.RemoveAll(x => x == null);
-                    cameraMixerTimelineBehaviour.cameraPostProductions.RemoveAll(x => cameraMixerTimelineBehaviour.cameraPostProductions.Any(y => y.GetType() == x.GetType() && x!= y));
-
+                    cameraMixerTimelineBehaviour.cameraPostProductions.RemoveAll(x =>
+                        cameraMixerTimelineBehaviour.cameraPostProductions.Any(
+                            y => y.GetType() == x.GetType() && x != y));
                 }
             }
 
             cameraQue.Clear();
             currentTime = (float)director.time;
-            var offsetTime = director.time + (1 / timelineAsset.editorSettings.frameRate)*track.preRenderFrame;
+            var offsetTime = director.time + (1 / timelineAsset.editorSettings.frameRate) * track.preRenderFrame;
             Material material1 = null;
             var timeMax = double.MinValue;
             for (int i = 0; i < timelineClips.Count; i++)
             {
                 var clip = timelineClips[i];
                 var cameraMixerTimelineClip = clip.asset as CameraMixerTimelineClip;
-                
+
                 float inputWeight = playable.GetInputWeight(i);
                 ScriptPlayable<CameraMixerTimelineBehaviour> inputPlayable =
                     (ScriptPlayable<CameraMixerTimelineBehaviour>)playable.GetInput(i);
@@ -87,8 +86,9 @@ namespace CameraLiveProduction
                 var inputPlayableTime = inputPlayable.GetTime();
 
 #if UNITY_EDITOR
-                
-                if (track.clipNameAsCameraName && cameraMixerTimelineClip != null && cameraMixerTimelineClip.liveCamera != null)
+
+                if (track.clipNameAsCameraName && cameraMixerTimelineClip != null &&
+                    cameraMixerTimelineClip.liveCamera != null)
                 {
                     clip.displayName = cameraMixerTimelineClip.liveCamera.gameObject.name;
                 }
@@ -105,47 +105,39 @@ namespace CameraLiveProduction
                     if (clip.start <= currentTime && currentTime < clip.start + clip.duration)
                     {
                         if (input.liveCamera) input.liveCamera.TargetCamera.enabled = true;
-                        cameraQue.Add(new CameraMixerClipInfo(cameraMixerTimelineClip.liveCamera, inputWeight, input.material));
+                        cameraQue.Add(new CameraMixerClipInfo(cameraMixerTimelineClip.liveCamera, inputWeight,
+                            input.fadeMaterialSettingIndex));
                     }
                     else
                     {
                         UpdatePostEffect(input);
                     }
-                }else
+                }
+                else
                 {
                     if (clip.start <= offsetTime && offsetTime < clip.start + clip.duration)
                     {
                         if (input.liveCamera) input.liveCamera.TargetCamera.enabled = true;
-                        cameraQue.Add(new CameraMixerClipInfo(cameraMixerTimelineClip.liveCamera, inputWeight, input.material));
+                        cameraQue.Add(new CameraMixerClipInfo(cameraMixerTimelineClip.liveCamera, inputWeight,
+                            input.fadeMaterialSettingIndex));
                     }
                     else
                     {
                         UpdatePostEffect(input);
                     }
                 }
-                
-                if(inputWeight is > 0f and < 1.0f)
+
+                if (inputWeight is > 0f and < 1.0f)
                 {
                     if (timeMax < inputPlayableTime)
                     {
-                        if (material1 == null)
-                        {
-                            material1 = input.material;
-                            timeMax = inputPlayableTime;
-                        }
-                        else
-                        {
-                            material1 = input.material;
-                            timeMax = inputPlayableTime;
-                        }
+                        timeMax = inputPlayableTime;
                     }
                 }
-                
             }
-            
-            cameraQue.Sort( (a, b) => a.inputWeight.CompareTo(b.inputWeight));
-            SetCameraQueue(cameraQue, material1);
-            // ApplyPostEffect(cameraQue);
+
+            cameraQue.Sort((a, b) => a.inputWeight.CompareTo(b.inputWeight));
+            SetCameraQueue(cameraQue);
 
             if (debugText != null)
             {
@@ -154,11 +146,11 @@ namespace CameraLiveProduction
                 stringBuilder.Append($"[{cameraMixer.gameObject.scene.name}]  ");
                 stringBuilder.Append(dateTime.ToString(@"hh\:mm\:ss\:ff"));
                 stringBuilder.Append(" ");
-                stringBuilder.Append((Mathf.CeilToInt((float)timelineAsset.editorSettings.frameRate * (float) director.time)));
+                stringBuilder.Append(
+                    (Mathf.CeilToInt((float)timelineAsset.editorSettings.frameRate * (float)director.time)));
                 stringBuilder.Append("f  ");
-                
-                debugText.text = stringBuilder.ToString();
 
+                debugText.text = stringBuilder.ToString();
             }
 
             if (cameraMixer.cameraRenderTiming == CameraRenderTiming.Timeline)
@@ -166,14 +158,13 @@ namespace CameraLiveProduction
                 cameraMixer.Render();
             }
         }
-        
-        public override void OnPlayableDestroy (Playable playable)
+
+        public override void OnPlayableDestroy(Playable playable)
         {
             isFirstFrameHappened = false;
-            if(cameraMixer)cameraMixer.useTimeline = false;
         }
 
-        private void UpdatePostEffect( CameraMixerTimelineBehaviour input)
+        private void UpdatePostEffect(CameraMixerTimelineBehaviour input)
         {
             foreach (var postProduction in input.cameraPostProductions)
             {
@@ -184,32 +175,18 @@ namespace CameraLiveProduction
             }
         }
 
-        // private void ApplyPostEffect(List<CameraMixerClipInfo> clipInfos)
-        // {
-        //     foreach (var clipInfo in clipInfos)
-        //     {
-        //         foreach (var cameraPostProduction in clipInfo.behaviour.cameraPostProductions)
-        //         {
-        //             if (cameraPostProduction != null)
-        //             {
-        //                 if(clipInfo.behaviour.liveCamera.GetComponent<Camera>())cameraPostProduction.UpdateEffect(clipInfo.behaviour.liveCamera,currentTime);
-        //             }
-        //         }
-        //     }
-        // }
-
         public void RenameCameraByClipName()
         {
             var cameraClipDic = new Dictionary<Camera, string>();
             foreach (var clip in timelineClips)
             {
                 var asset = clip.asset as CameraMixerTimelineClip;
-                if(asset == null)continue;
+                if (asset == null) continue;
                 var clipName = clip.displayName;
-               
+
                 var camera = asset.behaviour.liveCamera.TargetCamera;
-                if(camera == null) continue;
-                
+                if (camera == null) continue;
+
                 Debug.Log($"{clipName} {camera.gameObject.name}");
                 if (cameraClipDic.ContainsKey(camera))
                 {
@@ -219,39 +196,36 @@ namespace CameraLiveProduction
                 else
                 {
                     Debug.Log("Not ContainsKey");
-                    cameraClipDic.Add(camera,clipName);
+                    cameraClipDic.Add(camera, clipName);
                 }
             }
 
             foreach (var camera in cameraClipDic.Keys)
             {
                 Debug.Log(cameraClipDic[camera]);
-                if(camera == null) continue;
+                if (camera == null) continue;
                 camera.gameObject.name = cameraClipDic[camera];
             }
-
         }
 
-        private void SetCameraQueue(List<CameraMixerClipInfo> clips, Material material)
+        private void SetCameraQueue(List<CameraMixerClipInfo> clips)
         {
-            if(cameraMixer == null) return;
-            if(clips.Count<=0) return;
-            
+            if (cameraMixer == null) return;
+            if (clips.Count <= 0) return;
+
             if (clips.Count == 1)
             {
-               
-                if(clips[0].liveCamera.TargetCamera == null) return;
-                cameraMixer.SetCameraQueue(clips[0].liveCamera,null,0);
+                if (clips[0].liveCamera.TargetCamera == null) return;
+                cameraMixer.SetCameraQueue(clips[0].liveCamera, null, 0, clips[0].fadeMaterialSettingIndex);
             }
             else if (clips.Count == 2)
             {
-                if(clips[0].liveCamera.TargetCamera == null || clips[1].liveCamera.TargetCamera == null) return;
+                if (clips[0].liveCamera.TargetCamera == null || clips[1].liveCamera.TargetCamera == null) return;
                 var dissolveWeight = clips[1].inputWeight == 0f ? 0f : 1f - clips[0].inputWeight;
-                cameraMixer.SetCameraQueue(clips[0].liveCamera, clips[1].liveCamera, dissolveWeight, material);
+                cameraMixer.SetCameraQueue(clips[0].liveCamera, clips[1].liveCamera, dissolveWeight,
+                    clips[0].fadeMaterialSettingIndex);
                 // Debug.Log($"A:{clips[0].liveCamera.TargetCamera.name} {clips[0].inputWeight}, B:{clips[1].liveCamera.TargetCamera.name} {clips[1].inputWeight}");
             }
-            
-            
         }
     }
 }

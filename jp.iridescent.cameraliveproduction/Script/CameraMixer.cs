@@ -1,11 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Experimental.Rendering;
-using UnityEngine.Rendering;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace CameraLiveProduction
@@ -47,10 +43,31 @@ namespace CameraLiveProduction
         public float inputWeight = 0.0f;
     }
 
+    [Serializable]
+    public class FadeMaterialSetting
+    {
+        public string name = "";
+        public Material material = null;
+        [HideInInspector] public Material instantiatedMaterial = null;
+
+        public void Initialize(RenderTexture A, RenderTexture B)
+        {
+            if (material == null) return;
+            instantiatedMaterial = new Material(material);
+            instantiatedMaterial.SetTexture("_TextureA", A);
+            instantiatedMaterial.SetTexture("_TextureB", B);
+        }
+
+        public void SetFade(float fade)
+        {
+            if (instantiatedMaterial == null) return;
+            instantiatedMaterial.SetFloat("_CrossFade", fade);
+        }
+    }
+
     [ExecuteAlways]
     public class CameraMixer : MonoBehaviour
     {
-        public bool useTimeline = false;
         public LiveCamera camera1Queue;
         public LiveCamera camera2Queue;
         public LiveCamera cam1;
@@ -65,8 +82,9 @@ namespace CameraLiveProduction
         public RenderTexture debugOverlayTexture;
         private Texture2D clearTexture;
         [Range(0, 1)] public float fader = 0f;
-        public Shader shader;
-        [SerializeField] private Material instantiatedFadeMaterial;
+
+        public List<FadeMaterialSetting> fadeMaterialSettings = new List<FadeMaterialSetting>();
+        public FadeMaterialSetting currentFadeMaterialSetting = null;
         public AntiAliasing antiAliasing = AntiAliasing.x2;
         public RenderTexture outputTarget;
         public RawImage outputImage;
@@ -77,10 +95,7 @@ namespace CameraLiveProduction
         public List<LiveCamera> cameraList = new List<LiveCamera>();
         public CameraRenderTiming cameraRenderTiming = CameraRenderTiming.Update;
 
-        public Material fadeMaterial;
-
         private readonly List<RenderTexture> _renderTexturesToBeDestroyed = new List<RenderTexture>();
-        private readonly List<Material> _materialsToBeDestroyed = new List<Material>();
 
         private void Start()
         {
@@ -91,7 +106,6 @@ namespace CameraLiveProduction
         public void Initialize()
         {
             _renderTexturesToBeDestroyed.RemoveAll(x => x == null);
-            _materialsToBeDestroyed.RemoveAll(x => x == null);
 
             InitMaterial();
             InitRenderTextures();
@@ -111,21 +125,30 @@ namespace CameraLiveProduction
 
         public void InitMaterial()
         {
-            SafeDestroyMaterial(instantiatedFadeMaterial);
-            if (fadeMaterial == null)
+            foreach (var fadeMaterialSetting in fadeMaterialSettings)
             {
-                shader = Resources.Load<Shader>("CameraSwitcherResources/Shader/CameraSwitcherFader");
-                fadeMaterial = new Material(shader);
-            }
-            else
-            {
-                instantiatedFadeMaterial = new Material(fadeMaterial);
+                if (fadeMaterialSetting.instantiatedMaterial)
+                {
+                    DestroyImmediate(fadeMaterialSetting.instantiatedMaterial);
+                }
             }
 
-            _materialsToBeDestroyed.Add(instantiatedFadeMaterial);
+            if (fadeMaterialSettings.Count == 0)
+            {
+                var shader = Resources.Load<Shader>("CameraSwitcherResources/Shader/CameraSwitcherFader");
+                fadeMaterialSettings.Add(new FadeMaterialSetting()
+                {
+                    name = "Default",
+                    material = new Material(shader)
+                });
+            }
 
-            instantiatedFadeMaterial.SetTexture("_TextureA", renderTexture1);
-            instantiatedFadeMaterial.SetTexture("_TextureB", renderTexture2);
+            currentFadeMaterialSetting = fadeMaterialSettings[0];
+
+            foreach (var fadeMaterialSetting in fadeMaterialSettings)
+            {
+                fadeMaterialSetting.Initialize(renderTexture1, renderTexture2);
+            }
         }
 
         public void InitRenderTextures()
@@ -141,10 +164,9 @@ namespace CameraLiveProduction
             renderTexture2 = CreateRenderTextureFromSettings();
             _renderTexturesToBeDestroyed.Add(renderTexture2);
 
-            if (instantiatedFadeMaterial != null)
+            foreach (var fadeMaterialSetting in fadeMaterialSettings)
             {
-                instantiatedFadeMaterial.SetTexture("_TextureA", renderTexture1);
-                instantiatedFadeMaterial.SetTexture("_TextureB", renderTexture2);
+                fadeMaterialSetting.Initialize(renderTexture1, renderTexture2);
             }
         }
 
@@ -168,7 +190,11 @@ namespace CameraLiveProduction
         private void OnDestroy()
         {
             RemoveCameraTargetTexture();
-            SafeDestroyMaterial(instantiatedFadeMaterial);
+            foreach (var fadeMaterialSetting in fadeMaterialSettings)
+            {
+                DestroyImmediate(fadeMaterialSetting.instantiatedMaterial);
+            }
+
             SafeDestroyRenderTexture(renderTexture1);
             SafeDestroyRenderTexture(renderTexture2);
 
@@ -180,13 +206,6 @@ namespace CameraLiveProduction
             if (!renderTexture || !_renderTexturesToBeDestroyed.Contains(renderTexture)) return;
             _renderTexturesToBeDestroyed.Remove(renderTexture);
             DestroyImmediate(renderTexture);
-        }
-
-        private void SafeDestroyMaterial(Material material)
-        {
-            if (!material || !_materialsToBeDestroyed.Contains(material)) return;
-            _materialsToBeDestroyed.Remove(material);
-            DestroyImmediate(material);
         }
 
         private void ApplyCameraQueue()
@@ -208,18 +227,20 @@ namespace CameraLiveProduction
 
         public void BlitOutputTarget(RenderTexture dst)
         {
-            if (instantiatedFadeMaterial == null) return;
-            Graphics.Blit(Texture2D.blackTexture, dst, instantiatedFadeMaterial);
+            if (currentFadeMaterialSetting == null) return;
+            Graphics.Blit(Texture2D.blackTexture, dst, currentFadeMaterialSetting.instantiatedMaterial);
         }
 
         public void SetCameraQueue(LiveCamera camera1, LiveCamera camera2 = null, float blend = 0f,
-            Material material = null)
+            int fadeSettingIndex = 0)
         {
             camera1Queue = camera1;
             camera2Queue = camera2;
 
             fader = blend;
-            this.instantiatedFadeMaterial = material ? material : instantiatedFadeMaterial;
+            currentFadeMaterialSetting = fadeSettingIndex < fadeMaterialSettings.Count
+                ? fadeMaterialSettings[fadeSettingIndex]
+                : fadeMaterialSettings[0];
         }
 
         private void UpdateCameraMixerPostEffect()
@@ -254,11 +275,38 @@ namespace CameraLiveProduction
             }
         }
 
+        private List<string> fadeMaterialNameCash = new List<string>();
+
+        private void RefreshFadeMaterialSettings()
+        {
+            fadeMaterialNameCash.Clear();
+            var sameNameCount = 0;
+            foreach (var fadeMaterialSetting in fadeMaterialSettings)
+            {
+                if (fadeMaterialNameCash.Contains(fadeMaterialSetting.name))
+                {
+                    fadeMaterialSetting.name = "New Material";
+                    if (sameNameCount > 0) fadeMaterialSetting.name += $" ({sameNameCount})";
+                    sameNameCount++;
+                }
+
+                if (fadeMaterialSetting.instantiatedMaterial == null || fadeMaterialSetting.material.shader !=
+                    fadeMaterialSetting.instantiatedMaterial.shader)
+                {
+                    if (fadeMaterialSetting.instantiatedMaterial != null)
+                        DestroyImmediate(fadeMaterialSetting.instantiatedMaterial);
+                    fadeMaterialSetting.instantiatedMaterial = new Material(fadeMaterialSetting.material);
+                }
+
+                fadeMaterialNameCash.Add(fadeMaterialSetting.name);
+            }
+        }
+
         public void Render()
         {
-            if (instantiatedFadeMaterial == null)
+            if (currentFadeMaterialSetting == null)
             {
-                InitMaterial();
+                currentFadeMaterialSetting = fadeMaterialSettings[0];
             }
 
 
@@ -272,15 +320,15 @@ namespace CameraLiveProduction
 
             if (outputImage)
             {
-                outputImage.material = instantiatedFadeMaterial;
+                outputImage.material = fadeMaterialSettings[0].instantiatedMaterial;
             }
 
-            instantiatedFadeMaterial.SetTexture("_TextureDebugOverlay",
+            currentFadeMaterialSetting.instantiatedMaterial.SetTexture("_TextureDebugOverlay",
                 debugOverlayTexture == null ? clearTexture : debugOverlayTexture);
 
 
             ApplyCameraQueue();
-            instantiatedFadeMaterial.SetFloat("_CrossFade", fader);
+            currentFadeMaterialSetting.SetFade(fader);
         }
 
         public void Update()
@@ -290,6 +338,7 @@ namespace CameraLiveProduction
                 if (camera && camera.cameraMixer != this) camera.cameraMixer = this;
             }
 
+            RefreshFadeMaterialSettings();
             if (cameraRenderTiming == CameraRenderTiming.Update)
             {
                 Render();

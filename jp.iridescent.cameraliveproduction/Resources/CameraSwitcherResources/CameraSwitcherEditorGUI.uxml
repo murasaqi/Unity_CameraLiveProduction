@@ -1,6 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
     <ui:VisualElement name="Settings">
-        <uie:ObjectField name="fadeMaterialField" allow-scene-objects="true" type="UnityEngine.Material, UnityEngine.CoreModule" focusable="true" binding-path="fadeMaterial" label="FadeMaterial" />
+        <uie:PropertyField binding-path="fadeMaterialSettings" label="Fade Material Settings" name="FadeMaterialSettingsField" />
         <uie:Vector2IntField label="Resolution" name="ResolutionField" />
         <uie:PropertyField name="ResolutionScaleField" binding-path="resolutionScale" />
         <uie:PropertyField name="CameraRenderTimingField" binding-path="cameraRenderTiming" />
@@ -18,7 +18,7 @@
                 <ui:VisualElement style="flex-direction: column; min-width: auto; align-items: stretch; justify-content: space-around; flex-wrap: nowrap; width: 100%; margin-left: 0; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0;">
                     <uie:ObjectField binding-path="cam1" name="Cam1Field" style="justify-content: space-around; width: 100%; margin-left: 0; margin-right: 0; margin-top: 1px; margin-bottom: 1px;" />
                     <ui:DropdownField index="-1" choices="System.Collections.Generic.List`1[System.String]" name="CameraList1" style="justify-content: space-around; width: 100%; margin-left: 0; margin-right: 0; margin-top: 1px; margin-bottom: 1px;" />
-                    <uie:ObjectField type="UnityEngine.RenderTexture, UnityEngine.CoreModule" name="renderTexture1" binding-path="renderTexture1" />
+                    <uie:ObjectField type="UnityEngine.RenderTexture, UnityEngine.CoreModule" name="renderTexture1" binding-path="renderTexture1" style="flex-wrap: nowrap;" />
                 </ui:VisualElement>
             </ui:VisualElement>
             <ui:VisualElement name="Camera2" style="align-items: center; min-width: auto; flex-wrap: nowrap; width: 50%; padding-left: 5px; padding-right: 5px;">
@@ -31,10 +31,10 @@
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
-        <ui:VisualElement style="margin-left: 3px; margin-right: 3px; margin-top: 1px; margin-bottom: 1px; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0;">
-            <ui:Slider picking-mode="Ignore" value="0" high-value="1" binding-path="fader" />
+        <ui:VisualElement style="margin-left: 3px; margin-right: 3px; margin-top: 1px; margin-bottom: 1px; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; flex-direction: row; justify-content: space-between;">
+            <ui:DropdownField index="-1" choices="System.Collections.Generic.List`1[System.String]" name="FadeSettingField" style="width: 30%; max-width: 200px;" />
+            <ui:Slider picking-mode="Ignore" value="0" high-value="1" binding-path="fader" style="max-width: 100%; width: 70%;" />
         </ui:VisualElement>
-        <uie:ObjectField name="InstantiatedFadeMaterialField" allow-scene-objects="true" type="UnityEngine.Material, UnityEngine.CoreModule" focusable="true" binding-path="instantiatedFadeMaterial" label="Instantiated Material" />
     </ui:VisualElement>
     <ui:VisualElement style="padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; margin-left: 0; margin-right: 0; margin-top: 8px; margin-bottom: 0;">
         <uie:PropertyField name="OutputImage" binding-path="outputImage" style="margin-left: 3px; margin-right: 3px; margin-top: 1px; margin-bottom: 1px;" />
