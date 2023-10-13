@@ -125,23 +125,33 @@ namespace CameraLiveProduction
 
         public void InitMaterial()
         {
+            // Remove and Destroy instantiate material if Material null
+
             foreach (var fadeMaterialSetting in fadeMaterialSettings)
             {
-                if (fadeMaterialSetting.instantiatedMaterial)
+                if (fadeMaterialSetting.material == null)
+                {
+                    if (fadeMaterialSettings.IndexOf(fadeMaterialSetting) == 0)
+                    {
+                        fadeMaterialSetting.material = CameraMixerUtility.DefaultMaterial;
+                    }
+
+                    fadeMaterialSetting.name = "Default";
+                }
+                else
+                {
+                    continue;
+                }
+
+                if (fadeMaterialSetting.instantiatedMaterial.shader != fadeMaterialSetting.material.shader)
                 {
                     DestroyImmediate(fadeMaterialSetting.instantiatedMaterial);
+                    fadeMaterialSetting.instantiatedMaterial = new Material(fadeMaterialSetting.material);
                 }
             }
 
-            if (fadeMaterialSettings.Count == 0)
-            {
-                var shader = Resources.Load<Shader>("CameraSwitcherResources/Shader/CameraSwitcherFader");
-                fadeMaterialSettings.Add(new FadeMaterialSetting()
-                {
-                    name = "Default",
-                    material = new Material(shader)
-                });
-            }
+            fadeMaterialSettings.RemoveAll(x => x.material == null);
+
 
             currentFadeMaterialSetting = fadeMaterialSettings[0];
 
