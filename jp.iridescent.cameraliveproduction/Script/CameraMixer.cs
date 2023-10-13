@@ -192,7 +192,7 @@ namespace CameraLiveProduction
         {
             foreach (var liveCamera in cameraList)
             {
-                if (liveCamera) liveCamera.TargetCamera.targetTexture = null;
+                if (liveCamera != null && liveCamera.TargetCamera != null) liveCamera.TargetCamera.targetTexture = null;
             }
         }
 
