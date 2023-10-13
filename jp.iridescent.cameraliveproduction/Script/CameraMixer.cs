@@ -290,6 +290,18 @@ namespace CameraLiveProduction
                     sameNameCount++;
                 }
 
+                if (fadeMaterialSetting.material == null)
+                {
+                    if (fadeMaterialSettings.IndexOf(fadeMaterialSetting) == 0 && fadeMaterialSetting.name == "Default")
+                    {
+                        fadeMaterialSetting.material = CameraMixerUtility.DefaultMaterial;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+
                 if (fadeMaterialSetting.instantiatedMaterial == null || fadeMaterialSetting.material.shader !=
                     fadeMaterialSetting.instantiatedMaterial.shader)
                 {
