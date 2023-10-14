@@ -238,6 +238,11 @@ namespace CameraLiveProduction
         public void BlitOutputTarget(RenderTexture dst)
         {
             if (currentFadeMaterialSetting == null) return;
+            if (currentFadeMaterialSetting.instantiatedMaterial == null)
+            {
+                InitMaterial();
+            }
+
             Graphics.Blit(Texture2D.blackTexture, dst, currentFadeMaterialSetting.instantiatedMaterial);
         }
 
@@ -317,6 +322,7 @@ namespace CameraLiveProduction
                 {
                     if (fadeMaterialSetting.instantiatedMaterial != null)
                         DestroyImmediate(fadeMaterialSetting.instantiatedMaterial);
+
                     fadeMaterialSetting.instantiatedMaterial = new Material(fadeMaterialSetting.material);
                 }
 
