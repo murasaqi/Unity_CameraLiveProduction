@@ -322,6 +322,14 @@ namespace CameraLiveProduction
                 {
                     if (fadeMaterialSetting.instantiatedMaterial != null)
                         DestroyImmediate(fadeMaterialSetting.instantiatedMaterial);
+                    if (fadeMaterialSetting.material == null)
+                    {
+                        if (fadeMaterialSettings.IndexOf(fadeMaterialSetting) == 0 &&
+                            fadeMaterialSetting.name == "Default")
+                            fadeMaterialSetting.material = CameraMixerUtility.DefaultMaterial;
+                        else
+                            continue;
+                    }
 
                     fadeMaterialSetting.instantiatedMaterial = new Material(fadeMaterialSetting.material);
                 }

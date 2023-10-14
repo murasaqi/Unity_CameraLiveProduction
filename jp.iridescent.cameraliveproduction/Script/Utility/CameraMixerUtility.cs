@@ -13,7 +13,7 @@ namespace CameraLiveProduction
 
         static CameraMixerUtility()
         {
-            DefaultMaterial = new Material(GetDefaultShader());
+            DefaultMaterial = GetDefaultShader() != null ? new Material(GetDefaultShader()) : null;
         }
     }
 }
