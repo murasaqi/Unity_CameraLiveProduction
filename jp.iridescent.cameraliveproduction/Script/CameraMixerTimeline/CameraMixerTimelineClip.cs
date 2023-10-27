@@ -14,6 +14,7 @@ namespace CameraLiveProduction
         [FormerlySerializedAs("newExposedReference")]
         public ExposedReference<LiveCamera> camera;
 
+        public RenderTexture debugRenderTexture = null;
         public int fadeMaterialSettingIndex = 0;
         public CameraMixerTimelineBehaviour clone;
         public CameraMixerTimelineTrack track;

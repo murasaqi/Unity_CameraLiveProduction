@@ -23,6 +23,7 @@ namespace CameraLiveProduction
 
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(serializedObject.FindProperty("camera"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("debugRenderTexture"));
             var fadeMaterialSettingIndex = serializedObject.FindProperty("fadeMaterialSettingIndex");
             // create a list of strings to choose from
             var options = new List<string>();

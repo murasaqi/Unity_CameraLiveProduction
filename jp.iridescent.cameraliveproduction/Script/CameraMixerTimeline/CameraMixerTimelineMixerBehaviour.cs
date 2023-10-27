@@ -15,12 +15,15 @@ namespace CameraLiveProduction
         public LiveCamera liveCamera;
         public float inputWeight;
         public int fadeMaterialSettingIndex;
+        public RenderTexture debugRenderTexture;
 
-        public CameraMixerClipInfo(LiveCamera liveCamera, float inputWeight, int fadeMaterialSettingIndex)
+        public CameraMixerClipInfo(LiveCamera liveCamera, float inputWeight, int fadeMaterialSettingIndex = 0,
+            RenderTexture debugRenderTexture = null)
         {
             this.liveCamera = liveCamera;
             this.inputWeight = inputWeight;
             this.fadeMaterialSettingIndex = fadeMaterialSettingIndex;
+            this.debugRenderTexture = debugRenderTexture;
         }
     }
 
@@ -31,7 +34,7 @@ namespace CameraLiveProduction
         private float currentTime;
         public List<TimelineClip> timelineClips = new List<TimelineClip>();
         private CameraMixer cameraMixer;
-
+        private RenderTexture clearRenderTexture;
         readonly List<CameraMixerClipInfo> cameraQue = new List<CameraMixerClipInfo>();
 
         private TimelineAsset timelineAsset;
@@ -50,6 +53,7 @@ namespace CameraLiveProduction
 
             if (isFirstFrameHappened == false)
             {
+                clearRenderTexture = CameraMixerUtility.GetAlphaZeroRenderTexture();
                 stringBuilder = new StringBuilder();
 
                 timelineAsset = director.playableAsset as TimelineAsset;
@@ -106,7 +110,7 @@ namespace CameraLiveProduction
                     {
                         if (input.liveCamera) input.liveCamera.TargetCamera.enabled = true;
                         cameraQue.Add(new CameraMixerClipInfo(cameraMixerTimelineClip.liveCamera, inputWeight,
-                            input.fadeMaterialSettingIndex));
+                            input.fadeMaterialSettingIndex, cameraMixerTimelineClip.debugRenderTexture));
                     }
                     else
                     {
@@ -119,7 +123,7 @@ namespace CameraLiveProduction
                     {
                         if (input.liveCamera) input.liveCamera.TargetCamera.enabled = true;
                         cameraQue.Add(new CameraMixerClipInfo(cameraMixerTimelineClip.liveCamera, inputWeight,
-                            input.fadeMaterialSettingIndex));
+                            input.fadeMaterialSettingIndex, cameraMixerTimelineClip.debugRenderTexture));
                     }
                     else
                     {
@@ -162,6 +166,7 @@ namespace CameraLiveProduction
         public override void OnPlayableDestroy(Playable playable)
         {
             isFirstFrameHappened = false;
+            if (clearRenderTexture != null) clearRenderTexture.Release();
         }
 
         private void UpdatePostEffect(CameraMixerTimelineBehaviour input)
@@ -217,6 +222,9 @@ namespace CameraLiveProduction
             {
                 if (clips[0].liveCamera.TargetCamera == null) return;
                 cameraMixer.SetCameraQueue(clips[0].liveCamera, null, 0, clips[0].fadeMaterialSettingIndex);
+                cameraMixer.debugOverlayTexture = clips[0].debugRenderTexture == null
+                    ? clearRenderTexture
+                    : clips[0].debugRenderTexture;
             }
             else if (clips.Count == 2)
             {
@@ -224,6 +232,13 @@ namespace CameraLiveProduction
                 var dissolveWeight = clips[1].inputWeight == 0f ? 0f : 1f - clips[0].inputWeight;
                 cameraMixer.SetCameraQueue(clips[0].liveCamera, clips[1].liveCamera, dissolveWeight,
                     clips[0].fadeMaterialSettingIndex);
+                var debugRenderTexture = clips[0].debugRenderTexture == null
+                    ? clearRenderTexture
+                    : clips[0].debugRenderTexture;
+                cameraMixer.debugOverlayTexture = debugRenderTexture == null
+                    ? clearRenderTexture
+                    : debugRenderTexture;
+
                 // Debug.Log($"A:{clips[0].liveCamera.TargetCamera.name} {clips[0].inputWeight}, B:{clips[1].liveCamera.TargetCamera.name} {clips[1].inputWeight}");
             }
         }
