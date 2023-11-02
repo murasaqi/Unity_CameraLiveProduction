@@ -378,7 +378,7 @@ namespace CameraLiveProduction
             }
 
             currentFadeMaterialSetting.instantiatedMaterial.SetTexture("_TextureDebugOverlay",
-                debugOverlayTexture == null ? clearTexture : debugOverlayTexture);
+                debugOverlayTexture != null ? debugOverlayTexture : clearTexture);
 
 
             ApplyCameraQueue();
