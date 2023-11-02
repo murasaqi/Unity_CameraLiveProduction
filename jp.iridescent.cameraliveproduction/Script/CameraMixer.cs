@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.Graphs;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -48,7 +49,7 @@ namespace CameraLiveProduction
     {
         public string name = "";
         public Material material = null;
-        [HideInInspector] public Material instantiatedMaterial = null;
+        public Material instantiatedMaterial = null;
 
         public void Initialize(RenderTexture A, RenderTexture B)
         {
@@ -80,6 +81,10 @@ namespace CameraLiveProduction
         public RenderTexture renderTexture1;
         public RenderTexture renderTexture2;
         public RenderTexture debugOverlayTexture;
+        public Color multiplyColorA = new Color(0, 0, 0, 0);
+        public Color multiplyColorB = new Color(0, 0, 0, 0);
+        public int cameraColorBlendModeA = 0;
+        public int cameraColorBlendModeB = 0;
         private Texture2D clearTexture;
         [Range(0, 1)] public float fader = 0f;
 
@@ -226,12 +231,17 @@ namespace CameraLiveProduction
             {
                 cam1.enabled = true;
                 cam1.TargetCamera.targetTexture = renderTexture1;
+
+                currentFadeMaterialSetting.instantiatedMaterial.SetColor("_MultiplyColorA", multiplyColorA);
+                currentFadeMaterialSetting.instantiatedMaterial.SetInt("_BlendModeA", cameraColorBlendModeA);
             }
 
             if (cam2 != null)
             {
                 cam2.enabled = true;
                 cam2.TargetCamera.targetTexture = renderTexture2;
+                currentFadeMaterialSetting.instantiatedMaterial.SetColor("_MultiplyColorB", multiplyColorB);
+                currentFadeMaterialSetting.instantiatedMaterial.SetInt("_BlendModeB", cameraColorBlendModeB);
             }
         }
 
@@ -256,6 +266,15 @@ namespace CameraLiveProduction
             currentFadeMaterialSetting = fadeSettingIndex < fadeMaterialSettings.Count
                 ? fadeMaterialSettings[fadeSettingIndex]
                 : fadeMaterialSettings[0];
+        }
+
+        public void SetMultiplyColor(Color multiplyColorA, CameraColorBlendMode blendModeA, Color multiplyColorB,
+            CameraColorBlendMode blendModeB)
+        {
+            this.multiplyColorA = multiplyColorA;
+            this.multiplyColorB = multiplyColorB;
+            cameraColorBlendModeA = (int)blendModeA;
+            cameraColorBlendModeB = (int)blendModeB;
         }
 
         private void UpdateCameraMixerPostEffect()

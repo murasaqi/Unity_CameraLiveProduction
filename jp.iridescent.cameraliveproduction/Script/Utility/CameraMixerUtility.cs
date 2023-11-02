@@ -9,11 +9,14 @@ namespace CameraLiveProduction
             return Resources.Load<Shader>("CameraSwitcherResources/Shader/CameraSwitcherFader");
         }
 
+
+        public static Color ClearColor;
         public static Material DefaultMaterial;
 
         static CameraMixerUtility()
         {
             DefaultMaterial = GetDefaultShader() != null ? new Material(GetDefaultShader()) : null;
+            ClearColor = new Color(0, 0, 0, 0);
         }
 
         public static RenderTexture GetAlphaZeroRenderTexture()

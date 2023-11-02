@@ -16,14 +16,19 @@ namespace CameraLiveProduction
         public float inputWeight;
         public int fadeMaterialSettingIndex;
         public RenderTexture debugRenderTexture;
+        public Color multiplyColor;
+        public CameraColorBlendMode colorBlendMode;
 
         public CameraMixerClipInfo(LiveCamera liveCamera, float inputWeight, int fadeMaterialSettingIndex = 0,
-            RenderTexture debugRenderTexture = null)
+            RenderTexture debugRenderTexture = null, Color multiplyColor = default,
+            CameraColorBlendMode colorBlendMode = CameraColorBlendMode.DISABLE)
         {
             this.liveCamera = liveCamera;
             this.inputWeight = inputWeight;
             this.fadeMaterialSettingIndex = fadeMaterialSettingIndex;
             this.debugRenderTexture = debugRenderTexture;
+            this.multiplyColor = multiplyColor;
+            this.colorBlendMode = colorBlendMode;
         }
     }
 
@@ -110,7 +115,8 @@ namespace CameraLiveProduction
                     {
                         if (input.liveCamera) input.liveCamera.TargetCamera.enabled = true;
                         cameraQue.Add(new CameraMixerClipInfo(cameraMixerTimelineClip.liveCamera, inputWeight,
-                            input.fadeMaterialSettingIndex, cameraMixerTimelineClip.debugRenderTexture));
+                            input.fadeMaterialSettingIndex, cameraMixerTimelineClip.debugRenderTexture,
+                            input.multiplyColor, input.colorBlendMode));
                     }
                     else
                     {
@@ -123,7 +129,8 @@ namespace CameraLiveProduction
                     {
                         if (input.liveCamera) input.liveCamera.TargetCamera.enabled = true;
                         cameraQue.Add(new CameraMixerClipInfo(cameraMixerTimelineClip.liveCamera, inputWeight,
-                            input.fadeMaterialSettingIndex, cameraMixerTimelineClip.debugRenderTexture));
+                            input.fadeMaterialSettingIndex, cameraMixerTimelineClip.debugRenderTexture,
+                            input.multiplyColor, input.colorBlendMode));
                     }
                     else
                     {
@@ -225,6 +232,8 @@ namespace CameraLiveProduction
                 cameraMixer.debugOverlayTexture = clips[0].debugRenderTexture == null
                     ? clearRenderTexture
                     : clips[0].debugRenderTexture;
+                cameraMixer.SetMultiplyColor(clips[0].multiplyColor, clips[0].colorBlendMode,
+                    CameraMixerUtility.ClearColor, CameraColorBlendMode.DISABLE);
             }
             else if (clips.Count == 2)
             {
@@ -238,6 +247,8 @@ namespace CameraLiveProduction
                 cameraMixer.debugOverlayTexture = debugRenderTexture == null
                     ? clearRenderTexture
                     : debugRenderTexture;
+                cameraMixer.SetMultiplyColor(clips[0].multiplyColor, clips[0].colorBlendMode, clips[1].multiplyColor,
+                    clips[1].colorBlendMode);
 
                 // Debug.Log($"A:{clips[0].liveCamera.TargetCamera.name} {clips[0].inputWeight}, B:{clips[1].liveCamera.TargetCamera.name} {clips[1].inputWeight}");
             }

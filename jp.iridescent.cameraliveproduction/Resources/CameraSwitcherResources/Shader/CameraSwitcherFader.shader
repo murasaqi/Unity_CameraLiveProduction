@@ -64,8 +64,8 @@ Shader "Unlit/CameraSwitcherFader"
             float2 _ClipSizeB;
             float4 _MultiplyColorA;
             float4 _MultiplyColorB;
-            int _BlendA;
-            int _BlendB;
+            int _BlendModeA;
+            int _BlendModeB;
             v2f vert (appdata v)
             {
                 v2f o;
@@ -96,32 +96,32 @@ Shader "Unlit/CameraSwitcherFader"
                 float4 debugOverlay = tex2D(_TextureDebugOverlay, i.uv);
                 // sample the texture
                
-                if(_BlendA == 1)
+                if(_BlendModeA == 1)
                 {
                     colA *= _MultiplyColorA;
-                }else if(_BlendA == 2)
+                }else if(_BlendModeA == 2)
                 {
                      colA += _MultiplyColorA;
-                }else if(_BlendA == 3)
+                }else if(_BlendModeA == 3)
                 {
                      colA -=_MultiplyColorA;
                 }
-                else if(_BlendA == 4)
+                else if(_BlendModeA == 4)
                 {
                     colA =_MultiplyColorA;
                 }
 
-                 if(_BlendB == 1)
+                 if(_BlendModeB == 1)
                 {
                     colB *=_MultiplyColorB;
-                }else if(_BlendB == 2)
+                }else if(_BlendModeB == 2)
                 {
                     colB += _MultiplyColorB;
-                }else if(_BlendB == 3)
+                }else if(_BlendModeB == 3)
                 {
                     colB -=_MultiplyColorB;
                 }
-                else if(_BlendB == 4)
+                else if(_BlendModeB == 4)
                 {
                     colB =_MultiplyColorB;
                 }

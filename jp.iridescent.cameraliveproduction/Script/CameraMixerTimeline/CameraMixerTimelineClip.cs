@@ -18,6 +18,8 @@ namespace CameraLiveProduction
         public int fadeMaterialSettingIndex = 0;
         public CameraMixerTimelineBehaviour clone;
         public CameraMixerTimelineTrack track;
+        public Color multiplyColor = new Color(0, 0, 0, 0);
+        public CameraColorBlendMode colorBlendMode = CameraColorBlendMode.DISABLE;
 
         public LiveCamera liveCamera;
         // public Material material;
@@ -35,6 +37,8 @@ namespace CameraLiveProduction
             liveCamera = camera.Resolve(graph.GetResolver());
             clone.liveCamera = liveCamera;
             clone.fadeMaterialSettingIndex = fadeMaterialSettingIndex;
+            clone.multiplyColor = multiplyColor;
+            clone.colorBlendMode = colorBlendMode;
             return playable;
         }
     }
