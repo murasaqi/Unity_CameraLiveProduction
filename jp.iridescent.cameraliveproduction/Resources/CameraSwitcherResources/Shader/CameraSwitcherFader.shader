@@ -128,7 +128,9 @@ Shader "Unlit/CameraSwitcherFader"
 
                  float4 col = lerp(colA,colB,_CrossFade);
 
-                 col = lerp(col,debugOverlay,debugOverlay.a);
+                float3 result = (debugOverlay.rgb * debugOverlay.a + (col.rgb * (1. - debugOverlay.a)));
+                col = float4(result,1);
+                 // col = lerp(col,debugOverlay,debugOverlay.a);
                 // col = float4(debugOverlay.a, 0, 0, 1);
                 // col = debugOverlay;
 
