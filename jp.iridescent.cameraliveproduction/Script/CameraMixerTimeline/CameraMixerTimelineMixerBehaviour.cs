@@ -38,8 +38,10 @@ namespace CameraLiveProduction
         private StringBuilder stringBuilder;
         private float currentTime;
         public List<TimelineClip> timelineClips = new List<TimelineClip>();
+
         private CameraMixer cameraMixer;
-        private RenderTexture clearRenderTexture;
+
+        // public RenderTexture clearRenderTexture;
         readonly List<CameraMixerClipInfo> cameraQue = new List<CameraMixerClipInfo>();
 
         private TimelineAsset timelineAsset;
@@ -58,7 +60,7 @@ namespace CameraLiveProduction
 
             if (isFirstFrameHappened == false)
             {
-                clearRenderTexture = CameraMixerUtility.GetAlphaZeroRenderTexture();
+                // clearRenderTexture = CameraMixerUtility.AlphaZeroTexture2D;
                 stringBuilder = new StringBuilder();
 
                 timelineAsset = director.playableAsset as TimelineAsset;
@@ -147,6 +149,7 @@ namespace CameraLiveProduction
                 }
             }
 
+
             cameraQue.Sort((a, b) => a.inputWeight.CompareTo(b.inputWeight));
             SetCameraQueue(cameraQue);
 
@@ -173,7 +176,7 @@ namespace CameraLiveProduction
         public override void OnPlayableDestroy(Playable playable)
         {
             isFirstFrameHappened = false;
-            if (clearRenderTexture != null) clearRenderTexture.Release();
+            // if (clearRenderTexture != null) clearRenderTexture.Release();
         }
 
         private void UpdatePostEffect(CameraMixerTimelineBehaviour input)
@@ -224,14 +227,17 @@ namespace CameraLiveProduction
         {
             if (cameraMixer == null) return;
             if (clips.Count <= 0) return;
-
+            cameraMixer.debugOverlayTexture = null;
             if (clips.Count == 1)
             {
                 if (clips[0].liveCamera.TargetCamera == null) return;
                 cameraMixer.SetCameraQueue(clips[0].liveCamera, null, 0, clips[0].fadeMaterialSettingIndex);
-                cameraMixer.debugOverlayTexture = clips[0].debugRenderTexture == null
-                    ? clearRenderTexture
+                var overlay = clips[0].debugRenderTexture == null
+                    ? CameraMixerUtility.AlphaZeroRenderTexture
                     : clips[0].debugRenderTexture;
+
+                cameraMixer.debugOverlayTexture = overlay;
+
                 cameraMixer.SetMultiplyColor(clips[0].multiplyColor, clips[0].colorBlendMode,
                     CameraMixerUtility.ClearColor, CameraColorBlendMode.DISABLE);
             }
@@ -242,14 +248,13 @@ namespace CameraLiveProduction
                 cameraMixer.SetCameraQueue(clips[0].liveCamera, clips[1].liveCamera, dissolveWeight,
                     clips[0].fadeMaterialSettingIndex);
                 var debugRenderTexture = clips[0].debugRenderTexture == null
-                    ? clearRenderTexture
+                    ? CameraMixerUtility.AlphaZeroRenderTexture
                     : clips[0].debugRenderTexture;
                 cameraMixer.debugOverlayTexture = debugRenderTexture == null
-                    ? clearRenderTexture
+                    ? CameraMixerUtility.AlphaZeroRenderTexture
                     : debugRenderTexture;
                 cameraMixer.SetMultiplyColor(clips[0].multiplyColor, clips[0].colorBlendMode, clips[1].multiplyColor,
                     clips[1].colorBlendMode);
-
                 // Debug.Log($"A:{clips[0].liveCamera.TargetCamera.name} {clips[0].inputWeight}, B:{clips[1].liveCamera.TargetCamera.name} {clips[1].inputWeight}");
             }
         }

@@ -83,8 +83,10 @@ namespace CameraLiveProduction
         public Color multiplyColorA = new Color(0, 0, 0, 0);
         public Color multiplyColorB = new Color(0, 0, 0, 0);
         public int cameraColorBlendModeA = 0;
+
         public int cameraColorBlendModeB = 0;
-        private Texture2D clearTexture;
+
+        // private Texture2D clearTexture;
         [Range(0, 1)] public float fader = 0f;
 
         public List<FadeMaterialSetting> fadeMaterialSettings = new List<FadeMaterialSetting>();
@@ -114,8 +116,7 @@ namespace CameraLiveProduction
             InitMaterial();
             InitRenderTextures();
 
-            if (clearTexture == null) clearTexture = new Texture2D(2, 2, TextureFormat.BGRA32, false);
-            clearTexture.SetPixel(0, 0, new Color(0, 0, 0, 0));
+            // if (clearTexture == null) clearTexture = CameraMixerUtility.ClearColor
 
             cameraList = cameraList.Where(x => x != null).ToList();
         }
@@ -211,8 +212,6 @@ namespace CameraLiveProduction
 
             SafeDestroyRenderTexture(renderTexture1);
             SafeDestroyRenderTexture(renderTexture2);
-
-            if (clearTexture) DestroyImmediate(clearTexture);
         }
 
         private void SafeDestroyRenderTexture(RenderTexture renderTexture)
@@ -378,7 +377,7 @@ namespace CameraLiveProduction
             }
 
             currentFadeMaterialSetting.instantiatedMaterial.SetTexture("_TextureDebugOverlay",
-                debugOverlayTexture != null ? debugOverlayTexture : clearTexture);
+                debugOverlayTexture != null ? debugOverlayTexture : CameraMixerUtility.AlphaZeroRenderTexture);
 
 
             ApplyCameraQueue();
