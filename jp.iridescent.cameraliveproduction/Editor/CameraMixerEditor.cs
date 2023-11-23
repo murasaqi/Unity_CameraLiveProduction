@@ -213,6 +213,7 @@ namespace CameraLiveProduction
 
         void OnSelectionChanged()
         {
+            if(serializedObject.targetObject == null) return;
             if (serializedObject.targetObject != Selection.activeObject)
             {
                 EditorApplication.update -= RefreshGUI;

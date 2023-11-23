@@ -131,31 +131,43 @@ namespace CameraLiveProduction
         public void InitMaterial()
         {
             // Remove and Destroy instantiate material if Material null
-
-            foreach (var fadeMaterialSetting in fadeMaterialSettings)
-            {
-                if (fadeMaterialSetting.material == null)
+            
+            if(fadeMaterialSettings.Count == 0) {
+                fadeMaterialSettings.Add(new FadeMaterialSetting()
                 {
-                    if (fadeMaterialSettings.IndexOf(fadeMaterialSetting) == 0)
+                    name = "Default",
+                    material = CameraMixerUtility.DefaultMaterial,
+                });
+                
+            }
+            else
+            {
+                foreach (var fadeMaterialSetting in fadeMaterialSettings)
+                {
+                    if (fadeMaterialSetting.material == null)
                     {
-                        fadeMaterialSetting.material = CameraMixerUtility.DefaultMaterial;
+                        if (fadeMaterialSettings.IndexOf(fadeMaterialSetting) == 0)
+                        {
+                            fadeMaterialSetting.material = CameraMixerUtility.DefaultMaterial;
+                        }
+
+                        fadeMaterialSetting.name = "Default";
+                    }
+                    else
+                    {
+                        continue;
                     }
 
-                    fadeMaterialSetting.name = "Default";
-                }
-                else
-                {
-                    continue;
-                }
-
-                if (fadeMaterialSetting.instantiatedMaterial.shader != fadeMaterialSetting.material.shader)
-                {
-                    DestroyImmediate(fadeMaterialSetting.instantiatedMaterial);
-                    fadeMaterialSetting.instantiatedMaterial = new Material(fadeMaterialSetting.material);
-                }
+                    if (fadeMaterialSetting.instantiatedMaterial.shader != fadeMaterialSetting.material.shader)
+                    {
+                        DestroyImmediate(fadeMaterialSetting.instantiatedMaterial);
+                        fadeMaterialSetting.instantiatedMaterial = new Material(fadeMaterialSetting.material);
+                    }
+                }    
+                fadeMaterialSettings.RemoveAll(x => x.material == null);
             }
 
-            fadeMaterialSettings.RemoveAll(x => x.material == null);
+          
 
 
             currentFadeMaterialSetting = fadeMaterialSettings[0];
