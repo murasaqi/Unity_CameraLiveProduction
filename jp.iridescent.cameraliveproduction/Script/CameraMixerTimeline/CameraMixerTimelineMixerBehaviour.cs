@@ -217,7 +217,7 @@ namespace CameraLiveProduction
             if (clips.Count == 1)
             {
                
-                if(clips[0].liveCamera.TargetCamera == null) return;
+                if(clips[0].liveCamera == null || clips[0].liveCamera.TargetCamera == null) return;
                 cameraMixer.SetCameraQueue(clips[0].liveCamera,null,0);
             }
             else if (clips.Count == 2)
@@ -227,8 +227,6 @@ namespace CameraLiveProduction
                 cameraMixer.SetCameraQueue(clips[0].liveCamera, clips[1].liveCamera, dissolveWeight);
                 // Debug.Log($"A:{clips[0].liveCamera.TargetCamera.name} {clips[0].inputWeight}, B:{clips[1].liveCamera.TargetCamera.name} {clips[1].inputWeight}");
             }
-            
-            
         }
     }
 }
