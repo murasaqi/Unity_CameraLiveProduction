@@ -12,10 +12,10 @@ namespace CameraLiveProduction
         [SerializeReference]public VolumeProfile volumeProfile;
         [HideInInspector]public Volume volume;
         [SerializeField] [Range(0f,1f)]public float volumeWeight = 1;
-        public override void UpdateEffect(LiveCamera liveCamera, float time,float weight = 1f)
+        public override void UpdateEffect(LiveCameraBase liveCamera, float time,float weight = 1f)
         {
-            if(liveCamera.TargetCamera == null)
-                return;
+            // if(liveCamera.TargetCamera == null)
+            //     return;
 
             progress = weight;
             if (volume == null)
@@ -32,7 +32,7 @@ namespace CameraLiveProduction
 #endif
         }
         
-        public override void Initialize(LiveCamera liveCamera)
+        public override void Initialize(LiveCameraBase liveCamera)
         {
             if(liveCamera == null)
                 return;
@@ -45,7 +45,7 @@ namespace CameraLiveProduction
             }
         }
 
-        public override void OnClipDisable(LiveCamera liveCamera)
+        public override void OnClipDisable(LiveCameraBase liveCamera)
         {
             if(volume == null) return;
             volume.weight = 0;
@@ -53,7 +53,7 @@ namespace CameraLiveProduction
             progress = 0;
         }
 
-        public override void OnDestroy(LiveCamera liveCamera)
+        public override void OnDestroy(LiveCameraBase liveCamera)
         {
         }
     }

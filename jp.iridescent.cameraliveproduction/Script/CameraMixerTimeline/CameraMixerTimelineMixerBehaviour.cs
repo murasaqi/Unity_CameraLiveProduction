@@ -12,10 +12,10 @@ namespace CameraLiveProduction
 
     public struct CameraMixerClipInfo
     {
-        public LiveCamera liveCamera;
+        public LiveCameraBase liveCamera;
         public float inputWeight;
        
-        public CameraMixerClipInfo(LiveCamera liveCamera, float inputWeight)
+        public CameraMixerClipInfo(LiveCameraBase liveCamera, float inputWeight)
         {
             this.liveCamera = liveCamera;
             this.inputWeight = inputWeight;
@@ -82,15 +82,15 @@ namespace CameraLiveProduction
 
 #if UNITY_EDITOR
                 
-                if (track.clipNameAsCameraName && cameraMixerTimelineClip != null && cameraMixerTimelineClip.liveCamera != null)
+                if (track.clipNameAsCameraName && cameraMixerTimelineClip != null && cameraMixerTimelineClip.liveCameraBase != null)
                 {
-                    clip.displayName = cameraMixerTimelineClip.liveCamera.gameObject.name;
+                    clip.displayName = cameraMixerTimelineClip.liveCameraBase.gameObject.name;
                 }
 
 #endif
-                if (input.liveCamera != null && cameraMixer.cameraList.Contains(input.liveCamera) != true)
+                if (input.liveCameraBase != null && cameraMixer.cameraList.Contains(input.liveCameraBase) != true)
                 {
-                    cameraMixer.cameraList.Add(input.liveCamera);
+                    cameraMixer.cameraList.Add(input.liveCameraBase);
                 }
 
 
@@ -98,8 +98,8 @@ namespace CameraLiveProduction
                 {
                     if (clip.start <= currentTime && currentTime < clip.start + clip.duration)
                     {
-                        if (input.liveCamera) input.liveCamera.TargetCamera.enabled = true;
-                        cameraQue.Add(new CameraMixerClipInfo(cameraMixerTimelineClip.liveCamera, inputWeight));
+                        if (input.liveCameraBase) input.liveCameraBase.SetEnableTargetCamera(true);
+                        cameraQue.Add(new CameraMixerClipInfo(cameraMixerTimelineClip.liveCameraBase, inputWeight));
                     }
                     else
                     {
@@ -109,8 +109,8 @@ namespace CameraLiveProduction
                 {
                     if (clip.start <= offsetTime && offsetTime < clip.start + clip.duration)
                     {
-                        if (input.liveCamera) input.liveCamera.TargetCamera.enabled = true;
-                        cameraQue.Add(new CameraMixerClipInfo(cameraMixerTimelineClip.liveCamera, inputWeight));
+                        if (input.liveCameraBase) input.liveCameraBase.SetEnableTargetCamera(true);
+                        cameraQue.Add(new CameraMixerClipInfo(cameraMixerTimelineClip.liveCameraBase, inputWeight));
                     }
                     else
                     {
@@ -156,7 +156,7 @@ namespace CameraLiveProduction
             {
                 if (postProduction.progress != 0f)
                 {
-                    postProduction.UpdateEffect(input.liveCamera, 0f, 0f);
+                    postProduction.UpdateEffect(input.liveCameraBase, 0f, 0f);
                 }
             }
         }
@@ -175,39 +175,39 @@ namespace CameraLiveProduction
         //     }
         // }
 
-        public void RenameCameraByClipName()
-        {
-            var cameraClipDic = new Dictionary<Camera, string>();
-            foreach (var clip in timelineClips)
-            {
-                var asset = clip.asset as CameraMixerTimelineClip;
-                if(asset == null)continue;
-                var clipName = clip.displayName;
-               
-                var camera = asset.behaviour.liveCamera.TargetCamera;
-                if(camera == null) continue;
-                
-                Debug.Log($"{clipName} {camera.gameObject.name}");
-                if (cameraClipDic.ContainsKey(camera))
-                {
-                    Debug.Log("ContainsKey");
-                    cameraClipDic[camera] = $"{cameraClipDic[camera]}_{clipName}";
-                }
-                else
-                {
-                    Debug.Log("Not ContainsKey");
-                    cameraClipDic.Add(camera,clipName);
-                }
-            }
-
-            foreach (var camera in cameraClipDic.Keys)
-            {
-                Debug.Log(cameraClipDic[camera]);
-                if(camera == null) continue;
-                camera.gameObject.name = cameraClipDic[camera];
-            }
-
-        }
+        // public void RenameCameraByClipName()
+        // {
+        //     var cameraClipDic = new Dictionary<Camera, string>();
+        //     foreach (var clip in timelineClips)
+        //     {
+        //         var asset = clip.asset as CameraMixerTimelineClip;
+        //         if(asset == null)continue;
+        //         var clipName = clip.displayName;
+        //        
+        //         var camera = asset.behaviour.liveCameraBase.TargetCamera;
+        //         if(camera == null) continue;
+        //         
+        //         Debug.Log($"{clipName} {camera.gameObject.name}");
+        //         if (cameraClipDic.ContainsKey(camera))
+        //         {
+        //             Debug.Log("ContainsKey");
+        //             cameraClipDic[camera] = $"{cameraClipDic[camera]}_{clipName}";
+        //         }
+        //         else
+        //         {
+        //             Debug.Log("Not ContainsKey");
+        //             cameraClipDic.Add(camera,clipName);
+        //         }
+        //     }
+        //
+        //     foreach (var camera in cameraClipDic.Keys)
+        //     {
+        //         Debug.Log(cameraClipDic[camera]);
+        //         if(camera == null) continue;
+        //         camera.gameObject.name = cameraClipDic[camera];
+        //     }
+        //
+        // }
 
         private void SetCameraQueue(List<CameraMixerClipInfo> clips)
         {
@@ -217,12 +217,12 @@ namespace CameraLiveProduction
             if (clips.Count == 1)
             {
                
-                if(clips[0].liveCamera == null || clips[0].liveCamera.TargetCamera == null) return;
+                // if(clips[0].liveCamera == null || clips[0].liveCamera.TargetCamera == null) return;
                 cameraMixer.SetCameraQueue(clips[0].liveCamera,null,0);
             }
             else if (clips.Count == 2)
             {
-                if(clips[0].liveCamera.TargetCamera == null || clips[1].liveCamera.TargetCamera == null) return;
+                // if(clips[0].liveCamera.TargetCamera == null || clips[1].liveCamera.TargetCamera == null) return;
                 var dissolveWeight = clips[1].inputWeight == 0f ? 0f : 1f - clips[0].inputWeight;
                 cameraMixer.SetCameraQueue(clips[0].liveCamera, clips[1].liveCamera, dissolveWeight);
                 // Debug.Log($"A:{clips[0].liveCamera.TargetCamera.name} {clips[0].inputWeight}, B:{clips[1].liveCamera.TargetCamera.name} {clips[1].inputWeight}");

@@ -25,7 +25,6 @@ namespace CameraLiveProduction
     [RequireComponent(typeof(Camera))]
     public class LiveCamera:LiveCameraBase
     {
-        public CameraMixer cameraMixer;
         public bool useCinemachineVolumeSettings = true;
         public CinemachineVolumeForceLayerChange cinemachineVolumeForceLayerChange;
 
@@ -65,10 +64,25 @@ namespace CameraLiveProduction
             }
             
         }
+        
+        public override LayerMask GetLayerMask()
+        {
+            return TargetCamera.cullingMask;
+        }
 
-        
-        
-        
+        public override void SetTargetTexture(RenderTexture texture)
+        {
+            base.SetTargetTexture(texture);
+            TargetCamera.targetTexture = texture;
+        }
+
+        public override void SetEnableTargetCamera(bool enable)
+        {
+            base.SetEnableTargetCamera(enable);
+            TargetCamera.enabled = enable;
+        }
+
+
 #if USE_URP
         public UniversalAdditionalCameraData universalAdditionalCameraData;
 #endif
@@ -122,6 +136,14 @@ namespace CameraLiveProduction
             // }
 
            
+        }
+        
+        public override void TryInitialize()
+        {
+            if (TargetCamera == null)
+            {
+                Initialize();
+            }
         }
 
         private void OnDestroy()

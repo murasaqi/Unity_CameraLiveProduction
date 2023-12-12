@@ -14,7 +14,7 @@ namespace CameraLiveProduction
         [FormerlySerializedAs("newExposedReference")] public ExposedReference<LiveCamera> camera;
         public CameraMixerTimelineBehaviour clone;
         public CameraMixerTimelineTrack track;
-        public LiveCamera liveCamera;
+        public LiveCameraBase liveCameraBase;
         // public Camera Camera => clone.camera;
         public ClipCaps clipCaps
         {
@@ -25,8 +25,8 @@ namespace CameraLiveProduction
         {
             var playable = ScriptPlayable<CameraMixerTimelineBehaviour>.Create(graph, behaviour);
             clone = playable.GetBehaviour();
-            liveCamera = camera.Resolve(graph.GetResolver());
-            clone.liveCamera = liveCamera;
+            liveCameraBase = camera.Resolve(graph.GetResolver());
+            clone.liveCameraBase = liveCameraBase;
             clone.Initialize();
             return playable;
         }

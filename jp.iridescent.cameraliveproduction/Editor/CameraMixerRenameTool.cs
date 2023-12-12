@@ -187,7 +187,7 @@ public class CameraMixerRenameTool : EditorWindow
     public void RenameCameraByClipName()
     {
         Debug.Log("clicked");
-        var cameraClipDic = new Dictionary<Camera, string>();
+        var cameraClipDic = new Dictionary<GameObject, string>();
         var clips = targetTrack.GetClips();
         
         foreach (var clip in clips)
@@ -197,7 +197,7 @@ public class CameraMixerRenameTool : EditorWindow
             var asset = clip.asset as CameraMixerTimelineClip;
             if(asset == null) continue;
             var clipName = clip.displayName;
-            var camera = asset.behaviour.liveCamera.GetComponent<Camera>();
+            GameObject camera = asset.behaviour.liveCameraBase.gameObject;
             if(camera == null) continue;
             // Debug.Log($"{clip.displayName} {asset.newExposedReference.Resolve(playableDirector.playableGraph.GetResolver())}");
             if (cameraClipDic.ContainsKey(camera))

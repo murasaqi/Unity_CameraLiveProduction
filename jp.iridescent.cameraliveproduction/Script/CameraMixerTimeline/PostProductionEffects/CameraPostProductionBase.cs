@@ -8,12 +8,12 @@ namespace CameraLiveProduction
     {
         
         public float progress { get;  set; }
-        public abstract void UpdateEffect(LiveCamera liveCamera, float time,float weight = 1);
-        public abstract void Initialize(LiveCamera liveCamera);
+        public abstract void UpdateEffect(LiveCameraBase liveCamera, float time,float weight = 1);
+        public abstract void Initialize(LiveCameraBase liveCamera);
 
-        public abstract void OnDestroy(LiveCamera liveCamera);
+        public abstract void OnDestroy(LiveCameraBase liveCamera);
         
-        public abstract void OnClipDisable(LiveCamera liveCamera);
+        public abstract void OnClipDisable(LiveCameraBase liveCamera);
 
 
     }

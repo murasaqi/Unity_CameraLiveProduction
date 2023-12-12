@@ -10,7 +10,7 @@ namespace CameraLiveProduction
     public class CameraMixerTimelineBehaviour : PlayableBehaviour
     {
         // public Camera camera;
-        [HideInInspector] public LiveCamera liveCamera = null;
+        [HideInInspector] public LiveCameraBase liveCameraBase = null;
         [SerializeReference] public List<CameraPostProductionBase> cameraPostProductions = new List<CameraPostProductionBase>();
         public override void OnPlayableCreate(Playable playable)
         {

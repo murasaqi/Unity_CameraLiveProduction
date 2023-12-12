@@ -10,10 +10,10 @@ namespace CameraLiveProduction
         // [HideInInspector]public Camera camera;
         public LayerMask cullingMask = -1;
         // private HDAdditionalCameraData hdAdditionalCameraData = null;
-        public override void UpdateEffect(LiveCamera liveCamera, float time,float weight = 1f)
+        public override void UpdateEffect(LiveCameraBase liveCamera, float time,float weight = 1f)
         {
-            if(liveCamera.TargetCamera == null)
-                return;
+            // if(liveCamera.TargetCamera == null)
+            //     return;
             #if USE_HDRP
             // if(hdAdditionalCameraData == null) hdAdditionalCameraData= camera.GetComponent<UnityEngine.Rendering.HighDefinition.HDAdditionalCameraData>();
             liveCamera.TargetCamera.cullingMask = cullingMask;
@@ -21,16 +21,16 @@ namespace CameraLiveProduction
         }
 
 
-        public override void OnClipDisable(LiveCamera liveCamera)
+        public override void OnClipDisable(LiveCameraBase liveCamera)
         {
         }
 
-        public override void Initialize(LiveCamera liveCamera)
+        public override void Initialize(LiveCameraBase liveCamera)
         {
-            cullingMask = liveCamera.TargetCamera.cullingMask;
+            cullingMask = liveCamera.GetLayerMask();
         }
         
-        public override void OnDestroy(LiveCamera liveCamera)
+        public override void OnDestroy(LiveCameraBase liveCamera)
         {
         }
         

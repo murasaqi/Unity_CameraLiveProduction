@@ -45,23 +45,29 @@ namespace CameraLiveProduction
         {
             base.Init(cameraMixer);
 
-            foreach (var liveCamera in cameraMixer.cameraList)
+            foreach (var liveCameraBase in cameraMixer.cameraList)
             {
-                if(liveCamera ==null) continue;
-#if USE_CINEMACHINE
-                if (liveCamera.cinemachineBrain != null)
+                if (liveCameraBase.GetType() == typeof(LiveCamera))
                 {
-                    // destroy brain child objects
-                    foreach (Transform child in liveCamera.cinemachineBrain.transform)
-                    {
-                        if(child != liveCamera.cinemachineBrain.transform)DestroyImmediate(child.gameObject);
-                    }
-                }
-#endif
+                    var liveCamera = (LiveCamera)liveCameraBase;
 
-                if (liveCamera.cinemachineVolumeForceLayerChange)
-                {
-                    liveCamera.cinemachineVolumeForceLayerChange.Init();
+
+                    if (liveCamera == null) continue;
+#if USE_CINEMACHINE
+                    if (liveCamera.cinemachineBrain != null)
+                    {
+                        // destroy brain child objects
+                        foreach (Transform child in liveCamera.cinemachineBrain.transform)
+                        {
+                            if (child != liveCamera.cinemachineBrain.transform) DestroyImmediate(child.gameObject);
+                        }
+                    }
+#endif
+                    if (liveCamera.cinemachineVolumeForceLayerChange)
+                    {
+                        liveCamera.cinemachineVolumeForceLayerChange.Init();
+                    }
+
                 }
             }
         }
@@ -92,27 +98,28 @@ namespace CameraLiveProduction
                 }
             }
             
-            foreach (var liveCamera in cameraMixer.cameraList)
+            foreach (var liveCameraBase in cameraMixer.cameraList)
             {
-                
-                if (liveCamera != null && liveCamera.cinemachineVolumeForceLayerChange != null)
+                if (liveCameraBase.GetType() == typeof(LiveCamera))
                 {
-                   if(liveCamera.cinemachineVolumeForceLayerChange)liveCamera.cinemachineVolumeForceLayerChange.SetEnable(false);
+                    var liveCamera = (LiveCamera) liveCameraBase;
+                    if (liveCamera != null && liveCamera.cinemachineVolumeForceLayerChange != null)
+                    {
+                        if(liveCamera.cinemachineVolumeForceLayerChange)liveCamera.cinemachineVolumeForceLayerChange.SetEnable(false);
+                    }
                 }
+                
             }
-            //
-            //
-            if (cameraMixer.cam1)
+            if (cameraMixer.cam1 && cameraMixer.cam1.GetType() == typeof(LiveCamera))
              {
-                 SetLayer(cameraMixer.cam1, true);
-                 
+                 var liveCamera = (LiveCamera) cameraMixer.cam1;
+                 SetLayer(liveCamera, true);
              }
-            //  
-            if(cameraMixer.cam2)
+            if(cameraMixer.cam2 && cameraMixer.cam2.GetType() == typeof(LiveCamera))
             {
-                SetLayer(cameraMixer.cam2, false);
-            }
-            //  
+                var liveCamera = (LiveCamera) cameraMixer.cam2;
+                SetLayer(liveCamera, false);
+            }  
              
         }
 

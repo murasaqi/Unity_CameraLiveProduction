@@ -18,6 +18,20 @@ namespace CameraLiveProduction
     {
        
         public virtual void Initialize(){}
+        public virtual void SetTargetTexture(RenderTexture texture){}
+
+
+        public CameraMixer cameraMixer;
+        public virtual void SetEnableTargetCamera(bool enable) { }
+        
+        public virtual LayerMask GetLayerMask()
+        {
+            return -1;
+        }
+        
+        public virtual void TryInitialize()
+        {
+        }
         // public Camera CreateCameraClone(bool disableOriginalCamera = false)
         // {
         //     // Debug.Log($"Create {originalCamera.name}");

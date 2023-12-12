@@ -72,7 +72,7 @@ namespace CameraLiveProduction
                 var type = CameraLiveSwitcherUtility.GetTypeByClassName(selectList[select]);
                 var property = Activator.CreateInstance(type) as CameraPostProductionBase;
                 // Debug.Log(cameraMixerTimelineClip.clone.liveCamera);
-                property?.Initialize(cameraMixerTimelineClip.clone.liveCamera);
+                property?.Initialize(cameraMixerTimelineClip.clone.liveCameraBase);
                 cameraMixerTimelineClip.behaviour.cameraPostProductions.Add(property);
             }
             
