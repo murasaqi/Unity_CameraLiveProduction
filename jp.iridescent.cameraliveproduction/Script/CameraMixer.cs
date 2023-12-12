@@ -213,9 +213,9 @@ namespace CameraLiveProduction
                 else
                 {
                     liveCamera.TargetCamera.enabled = false;
+                    liveCamera.TargetCamera.targetTexture = null;    
                 }
                 
-                liveCamera.TargetCamera.targetTexture = null;    
                 
             }
         }
