@@ -202,7 +202,7 @@ namespace CameraLiveProduction
         
             foreach (var liveCamera in cameraList)
             {
-                if(liveCamera == null) continue;
+                if(!liveCamera) continue;
 
                 
                 liveCamera.TryInitialize();

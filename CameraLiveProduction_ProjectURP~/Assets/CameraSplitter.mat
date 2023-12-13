@@ -1,0 +1,105 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-5323683640072581847
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 7
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: CameraSplitter
+  m_Shader: {fileID: -6465566751694194690, guid: 808d5bfd826e3124ba95eb0682c96767,
+    type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 2
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _Texture2D_01:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Texture2D_02:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Texture2D_03:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Texture2D_04:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Texture2D_05:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _End01: 0.2
+    - _End02: 0.4
+    - _End03: 0.6
+    - _End04: 0.8
+    - _End05: 1
+    - _EndRot01: 0
+    - _EndRot02: 0
+    - _EndRot03: 0
+    - _EndRot04: 0
+    - _EndRot05: 0
+    - _QueueControl: 0
+    - _QueueOffset: 0
+    - _Start01: 0
+    - _Start02: 0.2
+    - _Start03: 0.4
+    - _Start04: 0.6
+    - _Start05: 0.8
+    - _StartRot01: 0
+    - _StartRot02: 0
+    - _StartRot03: 0
+    - _StartRot04: 0
+    - _StartRot05: 0
+    m_Colors:
+    - _InputTextureResolution: {r: 512, g: 512, b: 0, a: 0}
+    - _OffsetPosition_01: {r: 0.32, g: 0, b: 0, a: 0}
+    - _OffsetPosition_02: {r: -0.12, g: 0, b: 0, a: 0}
+    - _OffsetPosition_03: {r: -0.35, g: 0, b: 0, a: 0}
+    - _OffsetPosition_04: {r: -0.67, g: 0, b: 0, a: 0}
+    - _OffsetPosition_05: {r: -1.14, g: 0, b: 0, a: 0}
+    - _OutputResolution: {r: 1920, g: 1080, b: 0, a: 0}
+    - _Scale: {r: 2, g: 2, b: 0, a: 0}
+  m_BuildTextureStacks: []
