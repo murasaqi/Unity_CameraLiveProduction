@@ -113,16 +113,16 @@ namespace CameraLiveProduction
 
             foreach (var liveCamera in cameraList)
             {
-                if(liveCamera)liveCamera.SetTargetTexture(null);
+                if(liveCamera)liveCamera.TargetTexture = null;
             }
             if (cam1 != null)
             {
-                cam1.SetTargetTexture(null);
+                cam1.TargetTexture = null;
             }
 
             if (cam2 != null)
             {
-                cam2.SetTargetTexture(null);
+                cam2.TargetTexture = null;
             }
         }
 
@@ -133,8 +133,8 @@ namespace CameraLiveProduction
             shader = Resources.Load<Shader>("CameraSwitcherResources/Shader/CameraSwitcherFader");
             material = new Material(shader);
             InitRenderTextures();
-            if(cam1 != null)cam1.SetTargetTexture(renderTexture1);
-            if(cam2 != null)cam2.SetTargetTexture(renderTexture2);
+            if(cam1 != null)cam1.TargetTexture = renderTexture1;
+            if(cam2 != null)cam2.TargetTexture = renderTexture2;
             material.SetTexture("_TextureA", renderTexture1);
             material.SetTexture("_TextureB", renderTexture2);
             if (clearTexture == null) clearTexture = new Texture2D(2, 2, TextureFormat.BGRA32, false);
@@ -147,8 +147,8 @@ namespace CameraLiveProduction
         private void OnDestroy()
         {
             DestroyImmediate(material);
-            if(cam1)cam1.SetTargetTexture(null);
-            if(cam2)cam2.SetTargetTexture(null);
+            if(cam1)cam1.TargetTexture = null;
+            if(cam2)cam2.TargetTexture =null;
             if(renderTexture1)DestroyImmediate(renderTexture1);
             if(renderTexture2)DestroyImmediate(renderTexture2);
             if(clearTexture)DestroyImmediate(clearTexture);
@@ -160,20 +160,6 @@ namespace CameraLiveProduction
         {
             cam1 = camera1Queue;
             cam2 = camera2Queue;
-            if (cam1 != null)
-            {
-                cam1.enabled = true;
-                cam1.SetTargetTexture(renderTexture1); 
-            }
-
-            if (cam2 != null)
-            {
-                cam2.enabled = true;
-                cam2.SetTargetTexture(renderTexture2);
-            }
-            
-            // material.SetFloat("_CrossFade", fader);
-            
         }
 
         public void BlitOutputTarget(RenderTexture dst)
@@ -203,19 +189,10 @@ namespace CameraLiveProduction
             foreach (var liveCamera in cameraList)
             {
                 if(!liveCamera) continue;
-
                 
                 liveCamera.TryInitialize();
-                if (liveCamera == cam1 || liveCamera == cam2)
-                {
-                  liveCamera.SetEnableTargetCamera(true);
-                }
-                else
-                {
-                    liveCamera.SetEnableTargetCamera(false);
-                    liveCamera.SetTargetTexture(null);    
-                }
-                
+                liveCamera.SetEnableTargetCamera(false);
+                liveCamera.TargetTexture = null;    
                 
             }
         }
@@ -229,7 +206,30 @@ namespace CameraLiveProduction
             {
                 Initialize();
             }
+            
+            ApplyCameraQueue();
 
+            
+            if (cam1)
+            {
+                cam1.Render(renderTexture1);
+                material.SetTexture("_TextureA", cam1.TargetTexture);
+                
+            }
+
+            if (cam2)
+            {
+                cam2.Render(renderTexture2);
+                material.SetTexture("_TextureB", cam2.TargetTexture);
+            }
+            
+            
+            material.SetTexture("_TextureDebugOverlay", debugOverlayTexture);
+            
+            material.SetFloat("_CrossFade", fader);
+            
+            
+              
             if (outputTarget != null)
             {
                 BlitOutputTarget(outputTarget);    
@@ -239,13 +239,6 @@ namespace CameraLiveProduction
             {
                 outputImage.material = material;
             }
-            
-            material.SetTexture("_TextureDebugOverlay", debugOverlayTexture);
-            // material.SetTexture("_TextureDebugOverlay", debugOverlayTexture == null ? clearTexture : debugOverlayTexture);
-
-            
-            ApplyCameraQueue();
-            material.SetFloat("_CrossFade", fader);
 
         }
 

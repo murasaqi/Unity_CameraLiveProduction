@@ -18,8 +18,16 @@ namespace CameraLiveProduction
     {
        
         public virtual void Initialize(){}
-        public virtual void SetTargetTexture(RenderTexture texture){}
 
+        public virtual RenderTexture TargetTexture
+        {
+            get;
+            set;
+        }
+
+        public virtual void Render(Texture outputTexture)
+        {
+        }
 
         public CameraMixer cameraMixer;
         public virtual void SetEnableTargetCamera(bool enable) { }
@@ -32,26 +40,7 @@ namespace CameraLiveProduction
         public virtual void TryInitialize()
         {
         }
-        // public Camera CreateCameraClone(bool disableOriginalCamera = false)
-        // {
-        //     // Debug.Log($"Create {originalCamera.name}");
-        //     if (originalCamera == null) return null;
-        //     cloneCamera = Instantiate(originalCamera);
-        //     cloneLiveCamera = cloneCamera.gameObject.AddComponent<CloneLiveCamera>();
-        //     originalCamera.enabled = !disableOriginalCamera;
-        //     return cloneCamera;
-        // }
-        //
-        // public void DestroyAllCloneCameraInChildren()
-        // {
-        //     var cloneCameras = transform.GetComponentsInChildren<CloneLiveCamera>();
-        //     
-        //     for( int i = cloneCameras.Length - 1; i >= 0; --i ){
-        //         if(cloneCameras[i].gameObject)DestroyImmediate( cloneCameras[i].gameObject );
-        //     }
-        //     
-        // }
-        // public Camera camera => targetCamera;
+        
 
 
     }

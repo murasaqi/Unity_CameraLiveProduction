@@ -26,8 +26,11 @@ namespace CameraLiveProduction
     {
 
         [SerializeField] private List<Camera> cameras;
-        private Vector2Int resolution = new Vector2Int  (1920,1080);
-        private List<RenderTexture> renderTextures = new List<RenderTexture>();
+        // private Vector2Int cameraMixerResolution = new Vector2Int(1920,1080);
+        [SerializeField] private Vector2Int individualResolution = new Vector2Int  (600,1080);
+        // private Vector2Int _individualResolution = new Vector2Int  (0,0);
+        // private List<RenderTexture> renderTextures = new List<RenderTexture>();
+        Dictionary<Camera,RenderTexture> renderTextures = new Dictionary<Camera, RenderTexture>();
         [SerializeField] private Material multiTextureSplitterMat;
         [SerializeField] private CustomRenderTexture customRenderTexture;
         private void OnEnable()
@@ -41,30 +44,72 @@ namespace CameraLiveProduction
             foreach (var camera in cameras)
             {
                 if(!camera) continue;
-                // camera.enabled = false;
+                camera.enabled = false;
             }
             
         }
 
-        
+        public override RenderTexture TargetTexture
+        {
+            get => customRenderTexture;
+            set
+            {
+                
+            }
+        }
+
 
         public override void SetEnableTargetCamera(bool enable)
         {
             
         }
-        private void Update()
+        public override void Render(Texture outputTexture)
         {
-           if(cameraMixer && cameraMixer.Resolution() != resolution)
-               InitializeRenderTexture();
-           if(cameras.Count != renderTextures.Count)
-               InitializeRenderTexture( );
+         
+            if (cameras.Count != renderTextures.Count)
+            {
+                InitializeRenderTexture( );
+            }
            
+            
+            foreach (var renderTexture in renderTextures)
+            {
+                if(renderTexture.Value.width != individualResolution.x ||
+                     renderTexture.Value.height != individualResolution.y)
+                 { 
+                    renderTexture.Value.Release();
+                    renderTexture.Key.targetTexture = null;
+                    renderTextures[renderTexture.Key] = new RenderTexture(individualResolution.x ,individualResolution.y,(int)cameraMixer.depthStencilFormat, cameraMixer.format);
+                    renderTexture.Key.targetTexture = renderTextures[renderTexture.Key];
+                     break;
+                 }
+                    
+            }
+
+           var i = 0;
            foreach (var renderTexture in renderTextures)
            {
                if(multiTextureSplitterMat)
                {
-                   multiTextureSplitterMat.SetTexture($"_Texture2D_0{renderTextures.IndexOf(renderTexture)+1}",renderTexture);
-               } 
+                   multiTextureSplitterMat.SetTexture($"_Texture2D_0{i+1}",renderTexture.Value);
+               }
+               
+               
+
+               i++;
+           }
+
+           foreach (var camera in cameras)
+           {
+               camera.enabled = false;
+               camera.Render();
+           }
+           
+           
+           if(multiTextureSplitterMat)
+           {
+               multiTextureSplitterMat.SetVector("_InputTextureResolution",new Vector4(individualResolution.x,individualResolution.y,0,0));
+               multiTextureSplitterMat.SetVector("_OutputResolution",new Vector4(cameraMixer.width,cameraMixer.height,0,0));
            }
            
            // if(customRenderTexture) customRenderTexture.Update();
@@ -74,7 +119,6 @@ namespace CameraLiveProduction
         {
             Debug.Log("InitializeRenderTexture");
             if(!cameraMixer)return;
-            resolution = cameraMixer.Resolution();
             
             foreach (var camera in cameras)
             {
@@ -84,23 +128,22 @@ namespace CameraLiveProduction
             foreach (var renderTexture in renderTextures)
             {
                 
-                if (renderTexture)
+                if (renderTexture.Value)
                 {
-                    renderTexture.Release();
-                    DestroyImmediate(renderTexture);
+                    renderTexture.Value.Release();
+                    DestroyImmediate(renderTexture.Value);
                 }
             }
 
             renderTextures.Clear();
             
-            var w = resolution.x / cameras.Count;
             foreach (var camera in cameras)
             {
                 if(!camera) continue;
                 
-                var renderTexture = new RenderTexture(w ,resolution.y,(int)cameraMixer.depthStencilFormat, cameraMixer.format);
+                var renderTexture = new RenderTexture(individualResolution.x ,individualResolution.y,(int)cameraMixer.depthStencilFormat, cameraMixer.format);
                 // renderTexture.Create();
-                renderTextures.Add(renderTexture);
+                renderTextures.Add(camera,renderTexture);
                 camera.targetTexture = renderTexture;
                 
                 if(multiTextureSplitterMat)
@@ -116,8 +159,8 @@ namespace CameraLiveProduction
         {
             foreach (var renderTexture in renderTextures)
             {
-                renderTexture.Release();
-                DestroyImmediate(renderTexture);
+                renderTexture.Value.Release();
+                DestroyImmediate(renderTexture.Value);
             }
 
             renderTextures.Clear();

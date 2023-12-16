@@ -70,10 +70,19 @@ namespace CameraLiveProduction
             return TargetCamera.cullingMask;
         }
 
-        public override void SetTargetTexture(RenderTexture texture)
+        public override RenderTexture TargetTexture
         {
-            base.SetTargetTexture(texture);
-            TargetCamera.targetTexture = texture;
+            get
+            {
+                return TargetCamera ? TargetCamera.targetTexture : null;
+            }
+            set
+            {
+                if (TargetCamera)   
+                {
+                    TargetCamera.targetTexture = value;
+                }
+            }
         }
 
         public override void SetEnableTargetCamera(bool enable)
@@ -129,18 +138,21 @@ namespace CameraLiveProduction
             {
                 originalCamera = GetComponent<Camera>();
             }
-
-            // if (cinemachineVolumeForceLayerChange != null && cinemachineVolumeForceLayerChange.volume != null)
-            // {
-            //     cinemachineVolumeForceLayerChange.volume.gameObject.SetActive(TargetCamera.enabled);
-            // }
-
+            
            
         }
-        
+
+        public override void Render(Texture outputTexture)
+        {
+            base.Render(outputTexture);
+            
+            originalCamera.targetTexture = outputTexture as RenderTexture;
+            originalCamera.Render();
+        }
+
         public override void TryInitialize()
         {
-            if (TargetCamera == null)
+            if (!TargetCamera)
             {
                 Initialize();
             }

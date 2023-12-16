@@ -25,14 +25,20 @@ Material:
     type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _ALPHAPREMULTIPLY_ON
+  - _RECEIVE_SHADOWS_OFF
+  - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords: []
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
+  m_CustomRenderQueue: 3000
+  stringTagMap:
+    RenderType: Transparent
+  disabledShaderPasses:
+  - DepthOnly
+  - SHADOWCASTER
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -71,10 +77,17 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _End01: 0.2
-    - _End02: 0.4
-    - _End03: 0.6
-    - _End04: 0.8
+    - _AlphaClip: 0
+    - _AlphaToMask: 0
+    - _Blend: 0
+    - _BlendModePreserveSpecular: 1
+    - _CastShadows: 0
+    - _Cull: 2
+    - _DstBlend: 10
+    - _End01: 0.28
+    - _End02: 0.49
+    - _End03: 0.8
+    - _End04: 1.08
     - _End05: 1
     - _EndRot01: 0
     - _EndRot02: 0
@@ -83,23 +96,30 @@ Material:
     - _EndRot05: 0
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _ReceiveShadows: 0
+    - _SrcBlend: 1
     - _Start01: 0
     - _Start02: 0.2
     - _Start03: 0.4
     - _Start04: 0.6
     - _Start05: 0.8
     - _StartRot01: 0
-    - _StartRot02: 0
-    - _StartRot03: 0
-    - _StartRot04: 0
-    - _StartRot05: 0
+    - _StartRot02: 5.2
+    - _StartRot03: -4.88
+    - _StartRot04: 5.24
+    - _StartRot05: -5.6
+    - _Surface: 1
+    - _WorkflowMode: 1
+    - _ZTest: 4
+    - _ZWrite: 0
+    - _ZWriteControl: 0
     m_Colors:
-    - _InputTextureResolution: {r: 512, g: 512, b: 0, a: 0}
-    - _OffsetPosition_01: {r: 0.32, g: 0, b: 0, a: 0}
-    - _OffsetPosition_02: {r: -0.12, g: 0, b: 0, a: 0}
-    - _OffsetPosition_03: {r: -0.35, g: 0, b: 0, a: 0}
-    - _OffsetPosition_04: {r: -0.67, g: 0, b: 0, a: 0}
-    - _OffsetPosition_05: {r: -1.14, g: 0, b: 0, a: 0}
+    - _InputTextureResolution: {r: 480, g: 1080, b: 0, a: 0}
+    - _OffsetPosition_01: {r: 0, g: 0, b: 0, a: 0}
+    - _OffsetPosition_02: {r: -0.5, g: 0, b: 0, a: 0}
+    - _OffsetPosition_03: {r: -1.46, g: 0, b: 0, a: 0}
+    - _OffsetPosition_04: {r: -2.33, g: 0, b: 0, a: 0}
+    - _OffsetPosition_05: {r: -2.95, g: 0, b: 0, a: 0}
     - _OutputResolution: {r: 1920, g: 1080, b: 0, a: 0}
-    - _Scale: {r: 2, g: 2, b: 0, a: 0}
+    - _Scale: {r: 1, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []

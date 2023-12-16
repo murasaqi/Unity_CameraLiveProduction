@@ -161,54 +161,7 @@ namespace CameraLiveProduction
             }
         }
 
-        // private void ApplyPostEffect(List<CameraMixerClipInfo> clipInfos)
-        // {
-        //     foreach (var clipInfo in clipInfos)
-        //     {
-        //         foreach (var cameraPostProduction in clipInfo.behaviour.cameraPostProductions)
-        //         {
-        //             if (cameraPostProduction != null)
-        //             {
-        //                 if(clipInfo.behaviour.liveCamera.GetComponent<Camera>())cameraPostProduction.UpdateEffect(clipInfo.behaviour.liveCamera,currentTime);
-        //             }
-        //         }
-        //     }
-        // }
-
-        // public void RenameCameraByClipName()
-        // {
-        //     var cameraClipDic = new Dictionary<Camera, string>();
-        //     foreach (var clip in timelineClips)
-        //     {
-        //         var asset = clip.asset as CameraMixerTimelineClip;
-        //         if(asset == null)continue;
-        //         var clipName = clip.displayName;
-        //        
-        //         var camera = asset.behaviour.liveCameraBase.TargetCamera;
-        //         if(camera == null) continue;
-        //         
-        //         Debug.Log($"{clipName} {camera.gameObject.name}");
-        //         if (cameraClipDic.ContainsKey(camera))
-        //         {
-        //             Debug.Log("ContainsKey");
-        //             cameraClipDic[camera] = $"{cameraClipDic[camera]}_{clipName}";
-        //         }
-        //         else
-        //         {
-        //             Debug.Log("Not ContainsKey");
-        //             cameraClipDic.Add(camera,clipName);
-        //         }
-        //     }
-        //
-        //     foreach (var camera in cameraClipDic.Keys)
-        //     {
-        //         Debug.Log(cameraClipDic[camera]);
-        //         if(camera == null) continue;
-        //         camera.gameObject.name = cameraClipDic[camera];
-        //     }
-        //
-        // }
-
+    
         private void SetCameraQueue(List<CameraMixerClipInfo> clips)
         {
             if(cameraMixer == null) return;

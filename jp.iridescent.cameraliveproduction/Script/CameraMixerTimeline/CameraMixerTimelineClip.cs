@@ -11,7 +11,7 @@ namespace CameraLiveProduction
     public class CameraMixerTimelineClip : PlayableAsset, ITimelineClipAsset
     {
         public CameraMixerTimelineBehaviour behaviour = new CameraMixerTimelineBehaviour();
-        [FormerlySerializedAs("newExposedReference")] public ExposedReference<LiveCamera> camera;
+        [FormerlySerializedAs("newExposedReference")] public ExposedReference<LiveCameraBase> camera;
         public CameraMixerTimelineBehaviour clone;
         public CameraMixerTimelineTrack track;
         public LiveCameraBase liveCameraBase;
