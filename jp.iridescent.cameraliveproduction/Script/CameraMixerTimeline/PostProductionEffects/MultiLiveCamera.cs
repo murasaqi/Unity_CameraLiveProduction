@@ -61,9 +61,19 @@ namespace CameraLiveProduction
 
         public override void SetEnableTargetCamera(bool enable)
         {
-            
+            foreach (var camera in cameras)
+            {
+                camera.enabled = enable;
+            }
+
         }
-        public override void Render(Texture outputTexture)
+
+        private void LateUpdate()
+        {
+            // Render();
+        }
+
+        public override void UpdateLiveCamera()
         {
          
             if (cameras.Count != renderTextures.Count)
@@ -93,16 +103,7 @@ namespace CameraLiveProduction
                {
                    multiTextureSplitterMat.SetTexture($"_Texture2D_0{i+1}",renderTexture.Value);
                }
-               
-               
-
                i++;
-           }
-
-           foreach (var camera in cameras)
-           {
-               camera.enabled = false;
-               camera.Render();
            }
            
            

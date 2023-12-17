@@ -113,16 +113,22 @@ namespace CameraLiveProduction
 
             foreach (var liveCamera in cameraList)
             {
-                if(liveCamera)liveCamera.TargetTexture = null;
+                if (liveCamera)
+                {
+                    liveCamera.TargetTexture = null;
+                }
             }
             if (cam1 != null)
             {
-                cam1.TargetTexture = null;
+                cam1.SetEnableTargetCamera(true);
+                cam1.TargetTexture = renderTexture1;
             }
 
             if (cam2 != null)
             {
-                cam2.TargetTexture = null;
+                
+                cam2.SetEnableTargetCamera(true);
+                cam2.TargetTexture = renderTexture2;
             }
         }
 
@@ -191,8 +197,18 @@ namespace CameraLiveProduction
                 if(!liveCamera) continue;
                 
                 liveCamera.TryInitialize();
-                liveCamera.SetEnableTargetCamera(false);
-                liveCamera.TargetTexture = null;    
+               
+                if (liveCamera == cam1 || liveCamera == cam2)
+                {
+                    if(liveCamera == cam1) liveCamera.TargetTexture = renderTexture1;
+                    if(liveCamera == cam2) liveCamera.TargetTexture = renderTexture2;
+                    liveCamera.SetEnableTargetCamera(true);
+                }
+                else
+                {
+                    liveCamera.SetEnableTargetCamera(false);
+                    liveCamera.TargetTexture = null;     
+                }
                 
             }
         }
@@ -212,14 +228,17 @@ namespace CameraLiveProduction
             
             if (cam1)
             {
-                cam1.Render(renderTexture1);
+                cam1.UpdateLiveCamera();
+                // cam1.Render(renderTexture1);
                 material.SetTexture("_TextureA", cam1.TargetTexture);
                 
             }
 
             if (cam2)
             {
-                cam2.Render(renderTexture2);
+                
+                cam2.UpdateLiveCamera();
+                // cam2.Render(renderTexture2);
                 material.SetTexture("_TextureB", cam2.TargetTexture);
             }
             

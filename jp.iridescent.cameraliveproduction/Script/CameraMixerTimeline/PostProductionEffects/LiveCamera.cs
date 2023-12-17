@@ -141,14 +141,16 @@ namespace CameraLiveProduction
             
            
         }
+        
 
-        public override void Render(Texture outputTexture)
-        {
-            base.Render(outputTexture);
-            
-            originalCamera.targetTexture = outputTexture as RenderTexture;
-            originalCamera.Render();
-        }
+        // SkinnedMeshのUpdateタイミングと噛み合わないため、マニュアルでのRender()はしないほうがよい
+        // public override void Render(Texture outputTexture)
+        // {
+        //     base.Render(outputTexture);
+        //     
+        //     originalCamera.targetTexture = outputTexture as RenderTexture;
+        //     originalCamera.Render();
+        // }
 
         public override void TryInitialize()
         {

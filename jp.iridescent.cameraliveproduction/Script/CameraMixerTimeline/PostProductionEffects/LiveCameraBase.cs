@@ -25,7 +25,12 @@ namespace CameraLiveProduction
             set;
         }
 
-        public virtual void Render(Texture outputTexture)
+        // SkinnedMeshのUpdateタイミングと噛み合わないため、マニュアルでのRender()はしないほうがよい
+        // public virtual void Render(Texture outputTexture)
+        // {
+        // }
+        
+        public virtual void UpdateLiveCamera()
         {
         }
 
