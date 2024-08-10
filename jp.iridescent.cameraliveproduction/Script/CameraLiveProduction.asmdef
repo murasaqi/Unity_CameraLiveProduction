@@ -31,6 +31,11 @@
             "name": "com.unity.cinemachine",
             "expression": "",
             "define": "USE_CINEMACHINE"
+        },
+        {
+            "name": "com.unity.cinemachine",
+            "expression": "3.0.0",
+            "define": "USE_CINEMACHINE_3"
         }
     ],
     "noEngineReferences": false
