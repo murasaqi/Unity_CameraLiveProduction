@@ -6,7 +6,11 @@ using UnityEngine.Rendering.HighDefinition;
 #endif
 
 #if USE_CINEMACHINE
+#if USE_CINEMACHINE_3
+using Unity.Cinemachine;
+#else
 using Cinemachine;
+#endif
 #endif
 
 using UnityEngine;
